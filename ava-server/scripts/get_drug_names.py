@@ -15,8 +15,8 @@ with open(input_path) as input_file:
 		if isfirst:
 			isfirst = False
 			continue		
-		
+
 		try:
-			pass
+			drug_names[row[5]]['doses'] += row[3]
 		except:
 			pass

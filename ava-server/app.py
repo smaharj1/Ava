@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, request, session, redirect, R
 from flask_pymongo import PyMongo
 from db.mongo_client import Mongo_Client
 import json
-from models.image_exctractor import Medicine_Name_Extractor as mne
+from models.image_extractor import Medicine_Name_Extractor as mne
 
 
 app = Flask(__name__)
