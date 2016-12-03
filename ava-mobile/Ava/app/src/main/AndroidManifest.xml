@@ -20,8 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StatsActivity" />
-        <activity android:name=".ResultsActivity"></activity>
+        <activity android:name=".StatsActivity">
+        </activity>
+        <activity android:name=".ResultsActivity" />
+        <activity android:name=".CameraActivity"></activity>
     </application>
 
 </manifest>
