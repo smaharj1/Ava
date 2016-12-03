@@ -18,9 +18,9 @@
         android:textStyle="normal|bold" />
 
     <pl.droidsonroids.gif.GifTextView
-        android:layout_width="274dp"
+        android:layout_width="354dp"
         android:layout_height="207dp"
-        android:background="@drawable/load"
+        android:background="@drawable/ekg"
         android:layout_marginBottom="79dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
