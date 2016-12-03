@@ -2,6 +2,8 @@ from flask import Flask, render_template, url_for, request, session, redirect, R
 from flask_pymongo import PyMongo
 from db.mongo_client import Mongo_Client
 import json
+from models.image_exctractor import Medicine_Name_Extractor as mne
+
 
 app = Flask(__name__)
 db = Mongo_Client()
@@ -35,6 +37,8 @@ def PANIC():
 
 @app.route('/medicine', methods=['GET', 'POST'])
 def GetMedicine():
+	imgURL = request.form['url']
+	labels = gmne.getMedicineLabels(imgURL)
 	return json.dumps({})
 
 @app.route('/prescriptions', methods=['GET'])

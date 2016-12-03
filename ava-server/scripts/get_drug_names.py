@@ -15,7 +15,7 @@ with open(input_path) as input_file:
 		if isfirst:
 			isfirst = False
 			continue		
-
+		
 		try:
 			pass
 		except:
