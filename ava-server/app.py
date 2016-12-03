@@ -9,8 +9,6 @@ db = Mongo(app)
 def Index():
 	return "Welcome to Ava"
 
-
-
 @app.route('/nearestHospital', methods=['POST'])
 def GetNearestHospital():
 	return "Blerp"
