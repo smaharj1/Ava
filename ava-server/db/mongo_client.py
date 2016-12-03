@@ -12,7 +12,7 @@ class Mongo_Client(object):
 		print(" * Mongo client initialized...")
 
 	def GetUserData(self):
-		cursor = self.db[self.collection].find({"name":"Nate"})
+		cursor = self.db[self.collection].find()
 		data = cursor[0]
 		del data['_id']
 		return data
@@ -43,4 +43,3 @@ class Mongo_Client(object):
 
 
 
-		
