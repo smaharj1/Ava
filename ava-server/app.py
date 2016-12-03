@@ -179,6 +179,7 @@ def GetNextReminder():
 	t = time.strftime("%H %M")
 	t = [int(x) for x in t.split()]
 	data = db.GetRemindersByDay(day)
+	print(data)
 	if data == []:
 		return json.dumps({})
 	for entry in data:
