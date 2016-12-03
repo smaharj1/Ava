@@ -9,7 +9,6 @@ class Panic_Handler(object):
 	@staticmethod
 	def Panic(location, user):
 		hospital, current_loc = Panic_Handler.getPanicData(location, user)
-		print(current_loc)
 		Panic_Handler.textFamily(Panic_Handler.db.GetFamily(user), current_loc)
 
 

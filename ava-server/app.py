@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, request, session, redirect, R
 from db.mongo_client import Mongo_Client
 import json, datetime, time
 from models.panic_handler import Panic_Handler as ph
-from hospital_locator import Hospital_Locator as hl
+from models.hospital_locator import Hospital_Locator as hl
 
 DOW = [
 	"Monday", 
@@ -27,8 +27,8 @@ def Index():
 
 @app.route('/nearestHospital', methods=['POST'])
 def GetNearestHospital():
-    #send loc as a dictionary of lat and lng
-    data = json.dumps(hl.findNearestHospital(loc))
+	#send loc as a dictionary of lat and lng
+	data = json.dumps(hl.findNearestHospital(loc))
 	return data
 
 @app.route('/getUserData', methods=['GET', 'POST'])
@@ -105,7 +105,7 @@ def CreateNewUser():
 	return json.dumps({})
 
 @app.route('/panic', methods=['GET'])
-def PANIC():
+def PANIC_AT_THE_DISCO():
 	loc = {'lat' : 40.6089687, 'lng' : -75.3781199}
 	ph.Panic(loc, "Bishal")
 	return json.dumps({})
@@ -114,8 +114,7 @@ def PANIC():
 def GetMedicine():
 	data = request.form.getlist('image')
 	labels = mne.getMedicineName(data)
-	print(labels)
-	return json.dumps({})
+	return json.dumps(labels)
 
 @app.route('/prescriptions', methods=['GET'])
 def GetPrescriptions():
