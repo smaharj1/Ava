@@ -26,3 +26,21 @@ class Mongo_Client(object):
 		cursor = self.db[self.collection].find()
 		return cursor[0]['ice']
 
+
+	def GetRemindersByDay(self, day):
+		data = self.db[self.collection].find()
+		return data[0]['scheduled_medications'][day]
+
+
+	def AddPrescription(self, medication, doses=[]):
+		current = self.db[self.collection].find({"firstName":"Bishal"})[0]
+		current['prescriptions'].append({'medication':medication, 'doses':doses})
+		self.db[self.collection].update({"firstName":"Bishal"}, {"$set": current}, upsert=False)
+
+
+	def GetPrescriptions(self):
+		return self.db[self.collection].find({"firstName":"Bishal"})[0]['prescriptions']
+
+
+
+		

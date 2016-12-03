@@ -12,10 +12,11 @@ import android.support.v4.app.NotificationCompat;
 public class AlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        System.out.println("Bringing out the alarm");
         createNotification(context, "Times up","5 seconds has passesd", "Alert");
     }
 
-    private void createNotification(Context context, String msg, String msgText, String msgAlert){
+    public void createNotification(Context context, String msg, String msgText, String msgAlert){
         PendingIntent notificIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),0);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -24,7 +25,7 @@ public class AlertReceiver extends BroadcastReceiver {
                 .setContentText(msgText);
 
         mBuilder.setContentIntent(notificIntent);
-        mBuilder.setDefaults(NotificationCompat.DEFAULT_SOUND);
+        mBuilder.setDefaults(NotificationCompat.DEFAULT_ALL);
         mBuilder.setAutoCancel(true);
 
         NotificationManager mNotificationmanager =
