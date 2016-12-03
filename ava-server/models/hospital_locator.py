@@ -21,3 +21,8 @@ class Hospital_Locator:
             "website":hospital.website
         }
 
+    @staticmethod
+    def getCurrentLocation(location):
+        myLoc = google_places.latlng_to_address(location[0],location[1])
+        return myLoc
+
