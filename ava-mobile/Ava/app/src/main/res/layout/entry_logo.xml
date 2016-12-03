@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_vertical|center_horizontal"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    android:layout_marginTop="20dp">
 
     <TextView
         android:text="Ava"
