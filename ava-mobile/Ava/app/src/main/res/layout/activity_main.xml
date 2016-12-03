@@ -30,10 +30,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/reminder"
-        android:onClick="open_full_reminder"
         android:clickable="true"
         android:background="#73E5E4E2"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:onClick="onReminderClicked">
 
         <TextView
             android:text="Next medication in"
@@ -46,11 +46,20 @@
         <TextView
             android:text="0:0"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
             android:id="@+id/count_down"
             android:textAlignment="center"
             android:textSize="100dp"
-            android:padding="20sp" />
+            android:padding="20sp"
+            android:layout_height="150dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/click_message"
+            android:textSize="30dp"
+            android:text="Click to indicate done!"
+            android:textAlignment="center"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

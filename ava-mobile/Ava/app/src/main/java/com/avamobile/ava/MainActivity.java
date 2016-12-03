@@ -16,13 +16,24 @@ import android.view.View;
 import android.widget.Button;
 
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
@@ -32,8 +43,20 @@ public class MainActivity extends AppCompatActivity {
     final CountDownLatch latch = new CountDownLatch(10);
     private int seconds = 5;
     private int minutes = 0;
+    private final String URL = "http://569859e8.ngrok.io";
 
+    private ArrayList<Medicine> prescriptions;
+    Medicine closestMedicine = null;
     private static final int CAMERA_REQUEST = 1888;
+
+    RequestQueue queue;
+
+    TextView countDownView;
+    TextView clickReminderView;
+
+    boolean medicineTaken = false;
+    ObjectAnimator colorFade;
+
 
 
     AnimatorSet animation;
@@ -56,34 +79,30 @@ public class MainActivity extends AppCompatActivity {
                 //set the new Content of your activity
                 MainActivity.this.setContentView(R.layout.activity_main);
 
-
+                queue = Volley.newRequestQueue(getApplicationContext());
                 // On clicking the camera button, start the Camera and wait for user to take a picture
                 Button add_medicine = (Button) findViewById(R.id.add_medicine);
                 add_medicine.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Intent cameraIntent =  new Intent(v.getContext(), CameraActivity.class);
-                        //cameraIntent.putExtra("startCamera", "true");
-                        //startActivity(cameraIntent);
                         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         startActivityForResult(cameraIntent, CAMERA_REQUEST);
                     }
                 });
 
 
-                run_countdown();
+                countDownView = (TextView) findViewById(R.id.count_down);
+                clickReminderView = (TextView) findViewById(R.id.click_message);
+                // Runs the count down on the screen
+                //run_countdown();
+                countDownRunner();
             }
         }.start();
 
-
-        // Handle the countdown for the application. Comes from REST Call
-        //run_countdown();
-
-
-
     }
 
-    private void run_countdown(){
+    // TODO: This is temporary
+    private void countDownRunner() {
         //Declare the timer
         Timer t = new Timer();
         //Set the schedule function and rate
@@ -95,17 +114,19 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void run() {
-                        TextView tv = (TextView) findViewById(R.id.count_down);
-                        tv.setText(String.valueOf(minutes)+":"+String.valueOf(seconds));
+                        countDownView.setText(String.valueOf(minutes)+":"+String.valueOf(seconds));
                         seconds -= 1;
 
                         if( minutes < 0){
-                            tv.setText("NOW!");
+                            countDownView.setText("NOW!");
+                            clickReminderView.setVisibility(View.VISIBLE);
+                            medicineTaken = true;
                             signal_alert(true);
                         }
                         if(seconds == 0)
                         {
-                            tv.setText(String.valueOf(minutes)+" : "+String.valueOf(seconds));
+                            clickReminderView.setVisibility(View.INVISIBLE);
+                            countDownView.setText(String.valueOf(minutes)+" : "+String.valueOf(seconds));
                             seconds=60;
                             minutes=minutes-1;
                         }
@@ -117,14 +138,119 @@ public class MainActivity extends AppCompatActivity {
         }, 0, 1000);
     }
 
-    private void signal_alert(boolean is_alert){
-        LinearLayout count_down = (LinearLayout) findViewById(R.id.reminder);
-        ObjectAnimator colorFade = ObjectAnimator.ofObject(count_down, "backgroundColor", new ArgbEvaluator(), Color.parseColor("#F9423A"), Color.parseColor("#ffffff"));
-        colorFade.setDuration(1000);
-        colorFade.start();
+
+    public void onReminderClicked(View view){
+        if (medicineTaken) {
+            // Make a rest call indicating the medicine indicated has been taken.
+            if (closestMedicine != null){
+                // Sends the request with closest Medicine name
+
+                closestMedicine = null;
+                signal_alert(false);
+                run_countdown();
+            }
+
+            medicineTaken = false;
+        }
+        else {
+            // Open the new activity to show all the reminders
+        }
+    }
+    private void run_countdown(){
+        // Make REST call here to get all the prescriptions and populate the array.
+        String requestURL = URL+"/reminders";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String res) {
+                        prescriptions = parse(res);
+
+                        // Gets the closest one of the reminder drug from the list and displays the countdown
+                        closestMedicine = getClosestReminder();
+                        int difference = (int) closestMedicine.getTimeDifference(getCurrentTime());
+                        minutes = difference / 60;
+                        seconds = difference - (minutes*60);
+
+                        //Declare the timer
+                        Timer t = new Timer();
+                        //Set the schedule function and rate
+                        t.scheduleAtFixedRate(new TimerTask() {
+
+                            @Override
+                            public void run() {
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        countDownView.setText(String.valueOf(minutes)+":"+String.valueOf(seconds));
+                                        seconds -= 1;
+
+                                        if( minutes < 0){
+                                            countDownView.setText("NOW!");
+                                            clickReminderView.setVisibility(View.VISIBLE);
+                                            medicineTaken = true;
+                                            signal_alert(true);
+                                        }
+                                        if(seconds == 0)
+                                        {
+                                            clickReminderView.setVisibility(View.INVISIBLE);
+                                            countDownView.setText(String.valueOf(minutes)+" : "+String.valueOf(seconds));
+                                            seconds=60;
+                                            minutes=minutes-1;
+                                        }
+                                    }
+
+                                });
+                            }
+
+                        }, 0, 1000);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        queue.add(stringRequest);
+
 
 
     }
+
+    public ArrayList<Medicine> parse(String jsonLine) {
+        JsonElement jelement = new JsonParser().parse(jsonLine);
+        JsonObject jobject = jelement.getAsJsonObject();
+        //jobject = jobject.getAsJsonObject("items");
+        JsonArray jarray = jobject.getAsJsonArray("reminders");
+
+        ArrayList<Medicine> result = new ArrayList<>();
+        //if(result.isEmpty()) return null;
+        String drugName;
+        long nextTime;
+
+        for (int i = 0; i < jarray.size(); i++) {
+            jobject = jarray.get(i).getAsJsonObject();
+            drugName = jobject.get("name").toString();
+            nextTime = jobject.get("targetTime").getAsLong();
+
+            result.add(new Medicine(drugName, nextTime));
+        }
+        return result;
+    }
+
+    private void signal_alert(boolean is_alert){
+        LinearLayout count_down = (LinearLayout) findViewById(R.id.reminder);
+        colorFade = ObjectAnimator.ofObject(count_down, "backgroundColor", new ArgbEvaluator(), Color.parseColor("#F9423A"), Color.parseColor("#ffffff"));
+        colorFade.setDuration(1000);
+        if (is_alert) {
+            colorFade.start();
+        }
+        else {
+            colorFade.cancel();
+        }
+    }
+
 
     /**
      * Serves as a callback for the startActivityForResult()
@@ -140,9 +266,38 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bmapPhoto = (Bitmap) data.getExtras().get("data");
             Intent intent = new Intent(this, ResultsActivity.class);
             startActivity(intent);
-            //imgViewResult.setImageBitmap(bmapPhoto);
-            //System.out.println();
         }
 
+    }
+
+    public void panic_clicked(View view){
+        Intent alertActivity = new Intent(getApplicationContext(),AlertActivity.class);
+        startActivity(alertActivity);
+    }
+
+    private Medicine getClosestReminder() {
+        Medicine temp = prescriptions.get(0);
+
+        long currentTime = getCurrentTime();
+        for (Medicine single: prescriptions){
+            if (single.getTimeDifference(currentTime) < temp.getTimeDifference(currentTime)) {
+                temp = single;
+            }
+        }
+        return temp;
+    }
+
+    /**
+     * Gets time in seconds.
+     * @return
+     */
+    private long getCurrentTime(){
+        Calendar rightNow = Calendar.getInstance();
+        long offset = rightNow.get(Calendar.ZONE_OFFSET) +
+                rightNow.get(Calendar.DST_OFFSET);
+        long sinceMid = (rightNow.getTimeInMillis() + offset) %
+                (24 * 60 * 60 * 1000);
+
+        return sinceMid/1000;
     }
 }
