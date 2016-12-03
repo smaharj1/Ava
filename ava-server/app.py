@@ -39,6 +39,8 @@ def Index():
 @app.route('/nearestHospital', methods=['POST'])
 def GetNearestHospital():
 	#send loc as a dictionary of lat and lng
+	loc = {}
+	loc['lat'], loc['lng'] = request.form['lat'], request.form['lng']
 	data = json.dumps(hl.findNearestHospital(loc))
 	return data
 
