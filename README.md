@@ -1,6 +1,9 @@
 #Ava
 Ava tears down the barriers that separate people in need from effective and timely treatment.
 
+##Dedication
+This is solely dedicated to Dr. Scott E. Frees, Professor of Computer Science at Ramapo College of New Jersey, Lehigh Alum, and heart of our hearts.  
+
 ## What it does
 Ava is an application that breaks down these barriers in two ways: increasing consistency and accuracy of self medication, and increasing response time and effectiveness of emergency treatment.
 
