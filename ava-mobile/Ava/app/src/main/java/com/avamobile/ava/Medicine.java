@@ -39,6 +39,10 @@ public class Medicine {
         return targetTime;
     }
 
+    public String getMedicineName() {
+        return medicineName;
+    }
+
     public void incrementAfterMedicine(long interval){
         targetTime += interval;
     }
