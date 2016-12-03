@@ -1,6 +1,6 @@
 import argparse
 import base64
-
+import json
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
@@ -38,4 +38,12 @@ class Medicine_Name_Extractor(object):
     @staticmethod
     def getMedicineName(imgUrl):
         medicineLabels = Medicine_Name_Extractor.getMedicineLabels(imgUrl);
+        medicineList = {}
+        with open("../data/drug_names") as medicineFile:
+            medicineList = json.load(data_file)
+
+        for label in medicineLabels:
+            if label.upper() in medicineList:
+                return label
+
         
