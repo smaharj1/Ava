@@ -27,7 +27,15 @@ def GetUserData():
 def CreateNewUser():
 	db.CreateNewUser({"firstName":"Nate",
 						"lastName":"Moon",
-						"scheduled_medications":[[9, 30], [17, 0]]})
+						"scheduled_medications":{
+							"Monday" : [],
+							"Tuesday": [],
+							"Wednesday":[],
+							"Thursday":[],
+							"Friday":[],
+							"Saturday":[],
+							"Sunday":[]
+						}})
 	return json.dumps({})
 
 

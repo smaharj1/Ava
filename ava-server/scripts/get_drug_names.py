@@ -1,4 +1,5 @@
 import csv
+import json
 
 input_path = "/Users/nate/Documents/Products.txt"
 drug_output = "./drug_names"
@@ -17,6 +18,15 @@ with open(input_path) as input_file:
 			continue		
 
 		try:
-			drug_names[row[5]]['doses'] += row[3]
+			if not row[3] in drugs_names[row[5]]:
+				drug_names[row[5]] += row[3].split(";")
+			else:
+				continue
 		except:
-			pass
+			drug_names[row[5]] = row[3].split(";")
+
+
+with open(drug_output, 'w') as outfile:
+	json.dump(drug_names, outfile)
+
+
