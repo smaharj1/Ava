@@ -21,7 +21,7 @@ import java.util.Map;
 public class AlertActivity extends Activity {
 
     private final String PANIC_URL = "http://569859e8.ngrok.io/panic";
-    private final String URL = "http://569859e8.ngrok.io/";
+    private final String URL = "http://569859e8.ngrok.io";
     private String responseData = "Empty Panic Response";
     private String LONGITUDE = "lng";
     private String LATITUDE = "lat";
@@ -81,12 +81,9 @@ public class AlertActivity extends Activity {
                         String loc = jobject.get("location").toString();
                         String phn = jobject.get("phone").toString();
                         String web = jobject.get("website").toString();
-                        String contact = jobject.get("contact").toString();
 
-                        TextView tv = (TextView) findViewById(R.id.location);
+                        TextView tv = (TextView) findViewById(R.id.hospital);
                         tv.setText(hospitalName);
-                        tv = (TextView) findViewById(R.id.contact);
-                        tv.setText(contact);
                         tv = (TextView) findViewById(R.id.location);
                         tv.setText(loc);
                         tv = (TextView) findViewById(R.id.phone);

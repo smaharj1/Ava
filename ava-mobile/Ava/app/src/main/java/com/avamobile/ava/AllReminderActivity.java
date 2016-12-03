@@ -51,11 +51,14 @@ public class AllReminderActivity extends AppCompatActivity {
 
                         ArrayList<String> allMeds = converToString();
 
-                        ListView photoListView = (ListView) findViewById(R.id.reminderList);
+                        ListView listView = (ListView) findViewById(R.id.reminderList);
 
-                        //String[] oo = {"http://compass.xbox.com/assets/23./0d/230dc52a-8f0e-40bf-bbd1-c51fdb8371e3.png?n=Homepage-360-UA_Upgrade-big_1056x594.png", "https://pbs.twimg.com/profile_images/515112446898368512/oQSyacEo.jpeg","https://pbs.twimg.com/profile_images/515112446898368512/oQSyacEo.jpeg","https://pbs.twimg.com/profile_images/515112446898368512/oQSyacEo.jpeg"};
+                        String[] oo = new String[] {"http://compass.xbox.com/assets/23./0d/230dc52a-8f0e-40bf-bbd1-c51fdb8371e3.png?n=Homepage-360-UA_Upgrade-big_1056x594.png", "https://pbs.twimg.com/profile_images/515112446898368512/oQSyacEo.jpeg","https://pbs.twimg.com/profile_images/515112446898368512/oQSyacEo.jpeg","https://pbs.twimg.com/profile_images/515112446898368512/oQSyacEo.jpeg"};
                         // This string array shows how many pictures to put.
-                        //photoListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, allMeds));
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                                (getApplicationContext(), android.R.layout.simple_list_item_1, oo);
+
+                        listView.setAdapter(adapter);
 
 
                     }

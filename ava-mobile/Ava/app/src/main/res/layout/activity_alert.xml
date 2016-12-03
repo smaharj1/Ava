@@ -36,28 +36,6 @@
         android:text="Loading..."
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/contact"
-        android:textSize="20sp"
-        android:fontFamily="serif"
-        android:layout_marginBottom="100dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:text="We have contacted"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView5"
-        android:textSize="20sp"
-        android:fontFamily="serif"
-        android:layout_above="@+id/contact"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="15dp" />
-
-    <TextView
-        android:text="Loading..."
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
         android:id="@+id/web"
         android:textSize="20sp"

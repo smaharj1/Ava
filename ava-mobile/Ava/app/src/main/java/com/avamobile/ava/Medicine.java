@@ -27,8 +27,11 @@ public class Medicine {
         int seconds = targetTime - (hours*3600) - (minutes*60);
 
         StringBuilder str = new StringBuilder();
-        str.append(hours+":");
-        str.append(minutes);
+        if (hours > 12 ) hours -= 12;
+        String temp = hours < 10 ? "0"+hours : Integer.toString(hours);
+        str.append(temp+":");
+        temp = minutes < 10 ? "0"+ minutes : Integer.toString(minutes);
+        str.append(temp);
 
         return str.toString();
     }
@@ -47,7 +50,7 @@ public class Medicine {
         return targetTime - givenTime;
     }
 
-    public long getTargetTime() {
+    public int getTargetTime() {
         return targetTime;
     }
 

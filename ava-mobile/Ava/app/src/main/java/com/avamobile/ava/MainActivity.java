@@ -407,6 +407,9 @@ public class MainActivity extends AppCompatActivity {
 
                                             if (minutes > 30) {
                                                 countDownView.setText(closestMedicine.getTime());
+                                                displayTime(closestMedicine.getTargetTime());
+
+
 
                                             } else {
                                                 countDownView.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
@@ -456,6 +459,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    public void displayTime(int targetTime) {
+        String text = "AM";
+        int hours = targetTime /3600;
+
+        if (hours > 12) {
+            text = "PM";
+
+        }
+
+        clickReminderView.setVisibility(View.VISIBLE);
+        clickReminderView.setText(text);
     }
 
     public ArrayList<Medicine> parse(String jsonLine) {
