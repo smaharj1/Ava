@@ -1,0 +1,14 @@
+get==0.0.0
+h5py==2.6.0
+numpy==1.11.2
+Pillow==3.4.2
+post==0.0.0
+protobuf==3.1.0
+public==0.0.0
+query-string==0.0.0
+request==0.0.0
+scipy==0.18.1
+setupfiles==0.0.0
+six==1.10.0
+tensorflow==0.12.0rc0
+tflearn==0.2.2
