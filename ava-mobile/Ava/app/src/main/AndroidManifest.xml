@@ -9,27 +9,35 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBZQ51n6Avg81hyk_TaJuxana_ES1u49DU" />
 
         <activity android:name=".MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StatsActivity">
-        </activity>
-        <activity android:name=".ResultsActivity" />
-        <activity android:name=".CameraActivity"></activity>
+        <activity android:name=".StatsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ResultsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AllReminderActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AlertActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
