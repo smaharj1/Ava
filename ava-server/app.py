@@ -101,7 +101,6 @@ def CreateNewUser():
 						]})
 	return json.dumps({})
 
-
 @app.route('/panic', methods=['GET'])
 def PANIC():
 	loc = {'lat' : 40.6089687, 'lng' : -75.3781199}
