@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Initiate the animation for the application.
-        new CountDownTimer(2000,1000){
+        new CountDownTimer(4000,1000){
 
             @Override
             public void onTick(long millisUntilFinished) {
