@@ -7,11 +7,13 @@ import android.animation.ObjectAnimator;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -156,12 +158,36 @@ public class MainActivity extends AppCompatActivity {
 //                PendingIntent.getBroadcast(MainActivity.this, 1, alertIntent,
 //                        PendingIntent.FLAG_UPDATE_CURRENT));
 
-        if(!alarmTriggered) {
 
-            System.out.println("Staring the alarm notification");
-            alert.startAlarm();
-            alarmTriggered = true;
-        }
+            NotificationCompat.Builder mBuilder =
+                    (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle("My notification")
+                            .setContentText("Hello World!");
+            // Creates an explicit intent for an Activity in your app
+            Intent resultIntent = new Intent(this, MainActivity.class);
+            mBuilder.setDefaults(NotificationCompat.DEFAULT_ALL);
+
+            // The stack builder object will contain an artificial back stack for the
+            // started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(MainActivity.class);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            mNotificationManager.notify(1, mBuilder.build());
+
     }
 
 
@@ -197,7 +223,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if (minutes == 0 && seconds == 0) {
                             // This is when we run alert notification
-                            startAlert();
+                            //startAlert();
+                            triggerAlarm();
                         }
                         if(seconds == 0)
                         {
@@ -217,16 +244,17 @@ public class MainActivity extends AppCompatActivity {
         }, 0, 1000);
     }
 
-    private void startAlert() {
-        System.out.println("OOO: Startinng the alert");
+    // TODO: not running right now
+    public void startAlert(View view) {
         Long alertTime = new GregorianCalendar().getTimeInMillis()+1*1000;
+        System.out.println("OOO: Startinng the alert" + alertTime);
 
         Intent alertIntent = new Intent(this, AlertReceiver.class);
 
         AlarmManager alarmManager = (AlarmManager)
                 getSystemService(Context.ALARM_SERVICE);
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, 2000,
                 PendingIntent.getBroadcast(this, 1, alertIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT));
     }
@@ -246,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
     public void onReminderClicked(View view){
         if (medicineTaken) {
             // Make a rest call indicating the medicine indicated has been taken.
-            if (closestMedicine != null){
+            //if (closestMedicine != null){
                 // Sends the request with closest Medicine name
                 //sendMedicationData();
 
@@ -256,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
 
             timer.cancel();
             countDownRunner();
-            }
+            //}
 
             medicineTaken = false;
         }
@@ -489,8 +517,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void panic_clicked(View view){
-        Intent alertActivity = new Intent(getApplicationContext(),AlertActivity.class);
-        startActivity(alertActivity);
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Are you sure?");
+        alertDialog.setMessage("");
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent alertActivity = new Intent(getApplicationContext(),AlertActivity.class);
+                        startActivity(alertActivity);
+
+                    }
+                });
+
+        alertDialog.show();
+
     }
 
     private Medicine getClosestReminder() {
