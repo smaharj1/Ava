@@ -1,6 +1,5 @@
 
 import csv
-import requests
 
 print("Processing survival data ...")
 
@@ -15,7 +14,7 @@ with open(data_path) as input_file:
 	with open(output_path, 'w') as output_file:
 		reader = csv.reader(input_file)
 		writer = csv.writer(output_file)
-
+		
 		isfirst = True
 		for row in reader:
 			if isfirst:
@@ -35,7 +34,7 @@ with open(data_path) as input_file:
 				coords = [float(x) for x in coords]
 				condition = row[8]
 				
-				writer.writerow([condition]+coords)
+				writer.writerow([condition]+coords+[row[11]])
 
 			except Exception as e:
 				print(str(e))
