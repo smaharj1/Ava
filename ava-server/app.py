@@ -1,7 +1,8 @@
 from flask import Flask, render_template, url_for, request, session, redirect, Response
 from db.mongo_client import Mongo_Client
-import json, datetime
+import json, datetime, time
 from models.panic_handler import Panic_Handler as ph
+from hospital_locator import Hospital_Locator as hl
 
 DOW = [
 	"Monday", 
@@ -26,7 +27,9 @@ def Index():
 
 @app.route('/nearestHospital', methods=['POST'])
 def GetNearestHospital():
-	return "Blerp"
+    #send loc as a dictionary of lat and lng
+    data = json.dumps(hl.findNearestHospital(loc))
+	return data
 
 @app.route('/getUserData', methods=['GET', 'POST'])
 def GetUserData():
@@ -126,14 +129,18 @@ def GetReminders():
 @app.route('/nextReminder', methods=['GET'])
 def GetNextReminder():
 
-	# Get todays date and time
 
-	# Get the next scheduled medication in the db
+    # Get todays date and time
 
-	# return it
+    # Get the next scheduled medication in the db
 
-	day = DOW[datetime.date.weekday()]
-	print(day)
-	return json.dumps({})
+    # return it
+
+    day = DOW[datetime.date.today().weekday()]
+    time = datetime.datetime.now()
+    t= time.strftime("%H %M")
+    print(t)
+   
+    return json.dumps({})
 
 
