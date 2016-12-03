@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,10 +7,54 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.avamobile.ava.MainActivity">
+    tools:context="com.avamobile.ava.MainActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <Button
+            android:text="Panic"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="@drawable/round_button"
+            android:id="@+id/panic"
+            android:onClick="panic_clicked"
+            android:textColor="@android:color/background_light" />
+    </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:text="Next Medication:"
+        android:layout_width="match_parent"
+        android:id="@+id/next_medication"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
-</RelativeLayout>
+        android:onClick="open_full_reminder"
+        android:clickable="true"
+        android:textSize="32dp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/count_down"
+        android:textAlignment="center" />
+
+    <Button
+        android:text="Add a medicine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_light"
+        android:id="@+id/add_medicine"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:text="My prescriptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/details_clicked"
+        android:background="@android:color/holo_blue_light" />
+
+</LinearLayout>
