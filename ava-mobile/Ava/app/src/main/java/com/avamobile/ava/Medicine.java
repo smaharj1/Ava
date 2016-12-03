@@ -11,17 +11,29 @@ public class Medicine {
     private final long ONE_DAY = 86400;
 
     /* Holds the time in seconds from midnight*/
-    private long targetTime;
+    private int targetTime;
 
     Calendar rightNow = Calendar.getInstance();
 
 
-    public Medicine(String name, long time){
+    public Medicine(String name, int time){
         medicineName = name;
         targetTime = time;
     }
 
-    public void setTargetTime(long currentTime) {
+    public String getTime() {
+        int hours = targetTime /3600;
+        int minutes = (targetTime - (hours*3600))/60;
+        int seconds = targetTime - (hours*3600) - (minutes*60);
+
+        StringBuilder str = new StringBuilder();
+        str.append(hours+":");
+        str.append(minutes);
+
+        return str.toString();
+    }
+
+    public void setTargetTime(int currentTime) {
         targetTime = currentTime;
     }
 
@@ -43,7 +55,7 @@ public class Medicine {
         return medicineName;
     }
 
-    public void incrementAfterMedicine(long interval){
+    public void incrementAfterMedicine(int interval){
         targetTime += interval;
     }
 
@@ -52,7 +64,7 @@ public class Medicine {
                 rightNow.get(Calendar.DST_OFFSET);
         long sinceMid = (rightNow.getTimeInMillis() + offset) %
                 (24 * 60 * 60 * 1000);
-        targetTime = sinceMid/1000;
+        targetTime = (int) sinceMid/1000;
     }
 
 //    public static void main(String[] args){

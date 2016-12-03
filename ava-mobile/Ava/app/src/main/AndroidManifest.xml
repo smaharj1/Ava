@@ -7,10 +7,19 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Permission to use AlarmManager -->
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
+    <permission android:name="com.avamobile.ava.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature"/>
+    <uses-permission android:name="com.weaverprojects.gpstest.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/-->
+
 
     <application
         android:allowBackup="true"
@@ -21,6 +30,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBZQ51n6Avg81hyk_TaJuxana_ES1u49DU" />
+
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>

@@ -87,11 +87,4 @@
         android:textSize="30sp"
         android:textColor="@android:color/background_light" />
 
-    <Button
-        android:text="Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:onClick="startAlert" />
-
 </LinearLayout>

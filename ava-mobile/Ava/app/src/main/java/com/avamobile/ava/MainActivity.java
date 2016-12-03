@@ -42,6 +42,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,8 +54,10 @@ import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Map;
 
+import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
@@ -81,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private String responseData = "Empty";   //To restore responses from the server
 
     private RequestQueue queue;
+    private Queue<Medicine> reminderInQueue = new LinkedList<>() ;
 
     private TextView countDownView;
     private TextView clickReminderView;
@@ -139,8 +143,8 @@ public class MainActivity extends AppCompatActivity {
                 countDownView = (TextView) findViewById(R.id.count_down);
                 clickReminderView = (TextView) findViewById(R.id.click_message);
                 // Runs the count down on the screen
-                //run_countdown();
-                countDownRunner();
+                run_countdown();
+                //countDownRunner();
             }
         }.start();
 
@@ -150,20 +154,11 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: Creating notification
     public void triggerAlarm(){
-//        Intent alertIntent = new Intent(MainActivity.this, AlertReceiver.class);
-//
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, 0,
-//                PendingIntent.getBroadcast(MainActivity.this, 1, alertIntent,
-//                        PendingIntent.FLAG_UPDATE_CURRENT));
-
-
             NotificationCompat.Builder mBuilder =
                     (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                             .setSmallIcon(R.mipmap.ic_launcher)
-                            .setContentTitle("My notification")
-                            .setContentText("Hello World!");
+                            .setContentTitle("Ava's message")
+                            .setContentText("Please take your medicine");
             // Creates an explicit intent for an Activity in your app
             Intent resultIntent = new Intent(this, MainActivity.class);
             mBuilder.setDefaults(NotificationCompat.DEFAULT_ALL);
@@ -191,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     // TODO: This is temporary
     private void countDownRunner() {
         //Declare the timer
@@ -216,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
                             countDownView.setText("NOW!");
                             clickReminderView.setVisibility(View.VISIBLE);
                             medicineTaken = true;
-                            missedTime = (int) getCurrentTime();
                             //triggerAlarm();
                             //alarmTriggered = true;
                             signal_alert(true);
@@ -225,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
                             // This is when we run alert notification
                             //startAlert();
                             triggerAlarm();
+                            missedTime = (int) getCurrentTime();
+
                         }
                         if(seconds == 0)
                         {
@@ -269,21 +264,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     public void onReminderClicked(View view){
         if (medicineTaken) {
             // Make a rest call indicating the medicine indicated has been taken.
             //if (closestMedicine != null){
-                // Sends the request with closest Medicine name
-                //sendMedicationData();
+            // Sends the request with closest Medicine name
+            //sendMedicationData();
 
-                closestMedicine = null;
-                signal_alert(false);
-                //TODO:run_countdown();
+            closestMedicine = null;
+            signal_alert(false);
+            //TODO:run_countdown();
 
             timer.cancel();
-            countDownRunner();
+            //countDownRunner();
+            run_countdown();
             //}
 
             medicineTaken = false;
@@ -291,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             // Open the new activity to show all the reminders
             Intent allReminders = new Intent(getApplicationContext(), AllReminderActivity.class);
-            allReminders.putExtra(ALL_PRESCRIPTIONS, prescriptions);
+            //allReminders.putExtra(ALL_PRESCRIPTIONS, prescriptions);
             startActivity(allReminders);
         }
     }
@@ -333,54 +327,123 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    private void run_countdown(){
+
+    public Medicine parseOne(String response) {
+        JsonElement jelement = new JsonParser().parse(response);
+        JsonObject jobject = jelement.getAsJsonObject();
+        //jobject = jobject.getAsJsonObject("items");
+        String medication = jobject.get("medication").toString();
+        JsonArray timeArray = jobject.getAsJsonArray("time");
+
+        int totalTime = 0;
+
+        totalTime += timeArray.get(0).getAsInt()*3600 ;
+        totalTime += timeArray.get(1).getAsInt()*60;
+
+
+        return new Medicine(medication, totalTime);
+    }
+
+    private void getNewData() {
         // Make REST call here to get all the prescriptions and populate the array.
-        String requestURL = URL+"/reminders";
+        String requestURL = URL+"/nextReminder";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
-                        prescriptions = parse(res);
-
+                        System.out.println("The response is "+ res);
+                        //Medicine receivedDrug = parse(res);
                         // Gets the closest one of the reminder drug from the list and displays the countdown
-                        closestMedicine = getClosestReminder();
+                        Medicine temp = parseOne(res);
+
+                        reminderInQueue.add(temp);
+
                         int difference = (int) closestMedicine.getTimeDifference(getCurrentTime());
                         minutes = difference / 60;
                         seconds = difference - (minutes*60);
 
-                        //Declare the timer
-                        Timer t = new Timer();
-                        //Set the schedule function and rate
-                        t.scheduleAtFixedRate(new TimerTask() {
 
-                            @Override
-                            public void run() {
-                                runOnUiThread(new Runnable() {
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-                                    @Override
-                                    public void run() {
-                                        countDownView.setText(String.valueOf(minutes)+":"+String.valueOf(seconds));
-                                        seconds -= 1;
+            }
+        });
 
-                                        if( minutes < 0){
-                                            countDownView.setText("NOW!");
-                                            clickReminderView.setVisibility(View.VISIBLE);
-                                            medicineTaken = true;
-                                            signal_alert(true);
+        queue.add(stringRequest);
+    }
+    private void run_countdown(){
+        // Make REST call here to get all the prescriptions and populate the array.
+        String requestURL = URL+"/nextReminder";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String res) {
+                        System.out.println("The response is "+ res);
+                        //Medicine receivedDrug = parse(res);
+                        // Gets the closest one of the reminder drug from the list and displays the countdown
+                        closestMedicine = parseOne(res);
+                        reminderInQueue.add(closestMedicine);
+
+                        int difference = (int) closestMedicine.getTimeDifference(getCurrentTime());
+                        minutes = difference / 60;
+                        seconds = difference - (minutes*60);
+
+                        while(!reminderInQueue.isEmpty()) {
+                            closestMedicine = reminderInQueue.remove();
+                            //Declare the timer
+                            timer = new Timer();
+                            //Set the schedule function and rate
+                            timer.scheduleAtFixedRate(new TimerTask() {
+
+                                @Override
+                                public void run() {
+                                    runOnUiThread(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            seconds -= 1;
+
+                                            if (minutes > 30) {
+                                                countDownView.setText(closestMedicine.getTime());
+
+                                            } else {
+                                                countDownView.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
+
+                                            }
+                                            if (minutes < 0) {
+                                                countDownView.setText("NOW!");
+                                                clickReminderView.setVisibility(View.VISIBLE);
+                                                medicineTaken = true;
+                                                signal_alert(true);
+                                            }
+
+                                            if (minutes == 0 && seconds == 0) {
+                                                // This is when we run alert notification
+                                                //startAlert();
+                                                triggerAlarm();
+                                                missedTime = (int) getCurrentTime();
+                                                getNewData();
+
+                                            }
+                                            if (seconds == 0) {
+                                                clickReminderView.setVisibility(View.INVISIBLE);
+                                                countDownView.setText(String.valueOf(minutes) + " : " + String.valueOf(seconds));
+                                                seconds = 60;
+                                                minutes = minutes - 1;
+                                            }
+
+                                            if (getCurrentTime() - missedTime > 1800) {
+                                                triggerMissMedicine();
+                                            }
                                         }
-                                        if(seconds == 0)
-                                        {
-                                            clickReminderView.setVisibility(View.INVISIBLE);
-                                            countDownView.setText(String.valueOf(minutes)+" : "+String.valueOf(seconds));
-                                            seconds=60;
-                                            minutes=minutes-1;
-                                        }
-                                    }
 
-                                });
-                            }
+                                    });
+                                }
 
-                        }, 0, 1000);
+                            }, 0, 1000);
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -404,12 +467,12 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Medicine> result = new ArrayList<>();
         //if(result.isEmpty()) return null;
         String drugName;
-        long nextTime;
+        int nextTime;
 
         for (int i = 0; i < jarray.size(); i++) {
             jobject = jarray.get(i).getAsJsonObject();
             drugName = jobject.get("name").toString();
-            nextTime = jobject.get("targetTime").getAsLong();
+            nextTime = jobject.get("targetTime").getAsInt();
 
             result.add(new Medicine(drugName, nextTime));
         }
@@ -543,17 +606,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private Medicine getClosestReminder() {
-        Medicine temp = prescriptions.get(0);
 
-        long currentTime = getCurrentTime();
-        for (Medicine single: prescriptions){
-            if (single.getTimeDifference(currentTime) < temp.getTimeDifference(currentTime)) {
-                temp = single;
-            }
-        }
-        return temp;
-    }
 
     /**
      * Gets time in seconds.
