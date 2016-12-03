@@ -18,7 +18,7 @@ class Hospital_Locator(object):
         hospital.get_details()
         return {
             "name":hospital.name,
-            "location":hospital.geo_location,
+            "location":Hospital_Locator.getCurrentLocation(hospital.geo_location)[0]['formatted_address'],
             "phone":hospital.local_phone_number,
             "website":hospital.website
         }

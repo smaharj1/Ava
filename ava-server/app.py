@@ -41,8 +41,9 @@ def GetNearestHospital():
 	#send loc as a dictionary of lat and lng
 	loc = {}
 	loc['lat'], loc['lng'] = request.form['lat'], request.form['lng']
-	data = json.dumps(hl.findNearestHospital(loc))
-	return data
+	data = hl.findNearestHospital(loc)
+	print(data)
+	return json.dumps(data)
 
 @app.route('/getUserData', methods=['GET', 'POST'])
 def GetUserData():
@@ -97,6 +98,18 @@ def CreateNewUser():
 								 {'medication' : 'Adderall',
 								 'time' : [12, 0],
 								 'times_missed' : 0 },
+								 {'medication' : 'Adderall',
+								 'time' : [15, 0],
+								 'times_missed' : 0},
+								 {'medication' : 'Adderall',
+								 'time' : [15, 30],
+								 'times_missed' : 0},
+								 {'medication' : 'Adderall',
+								 'time' : [16, 0],
+								 'times_missed' : 0},
+								 {'medication' : 'Adderall',
+								 'time' : [16, 30],
+								 'times_missed' : 0},
 								 {'medication' : 'Adderall',
 								 'time' : [17, 0],
 								 'times_missed' : 0}],

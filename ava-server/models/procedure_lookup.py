@@ -4,7 +4,7 @@ import editdistance
 def look_up_procedure(message):
 	message = message.strip().lower()
 	data = {}
-	with open("/Users/nate/Desktop/Ava/ava-server/data/procedures.json") as file:
+	with open("./data/procedures.json") as file:
 		data = json.load(file)
 
 	response = ""
