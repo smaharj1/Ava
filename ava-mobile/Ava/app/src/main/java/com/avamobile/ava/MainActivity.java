@@ -6,12 +6,19 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +40,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -40,6 +48,8 @@ import com.android.volley.AuthFailureError;
 
 import java.io.ByteArrayOutputStream;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -50,9 +60,10 @@ import java.util.concurrent.CountDownLatch;
 public class MainActivity extends AppCompatActivity {
 
     final CountDownLatch latch = new CountDownLatch(10);
-    private int seconds = 5;
+    private int seconds = 4;
     private int minutes = 0;
     private final String URL = "http://569859e8.ngrok.io";
+    private final String ALL_PRESCRIPTIONS = "prescriptions";
 
     private ArrayList<Medicine> prescriptions;
     Medicine closestMedicine = null;
@@ -62,24 +73,36 @@ public class MainActivity extends AppCompatActivity {
     //private String UPLOAD_URL = "http://69649754.ngrok.io/medicine";
     private String KEY_IMAGE = "image";
     private String KEY_NAME = "name";
+    private final String DRUG_NAME ="name";
+    private final String DATE = "date";
+    private final String TIME = "time";
     private String responseData = "Empty";   //To restore responses from the server
 
-    RequestQueue queue;
+    private RequestQueue queue;
 
-    TextView countDownView;
-    TextView clickReminderView;
+    private TextView countDownView;
+    private TextView clickReminderView;
 
     boolean medicineTaken = false;
+    boolean alarmTriggered = false;
+    private int missedTime = -1;
+
     ObjectAnimator colorFade;
 
-
+    Timer timer;
 
     AnimatorSet animation;
+    AlarmService alert;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.entry_logo);
         animation = new AnimatorSet();
+
+
 
         // Initiate the animation for the application.
         new CountDownTimer(2000,1000){
@@ -95,6 +118,11 @@ public class MainActivity extends AppCompatActivity {
 
                 queue = Volley.newRequestQueue(getApplicationContext());
 
+                LinearLayout count_down = (LinearLayout) findViewById(R.id.reminder);
+                colorFade = ObjectAnimator.ofObject(count_down, "backgroundColor", new ArgbEvaluator(), Color.parseColor("#F9423A"), Color.parseColor("#ffffff"));
+                colorFade.setDuration(1000);
+
+                //alert = new AlarmService(getApplicationContext());
                 // On clicking the camera button, start the Camera and wait for user to take a picture
                 Button add_medicine = (Button) findViewById(R.id.add_medicine);
                 add_medicine.setOnClickListener(new View.OnClickListener() {
@@ -116,12 +144,38 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
+    // TODO: Creating notification
+    public void triggerAlarm(){
+//        Intent alertIntent = new Intent(MainActivity.this, AlertReceiver.class);
+//
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, 0,
+//                PendingIntent.getBroadcast(MainActivity.this, 1, alertIntent,
+//                        PendingIntent.FLAG_UPDATE_CURRENT));
+
+        if(!alarmTriggered) {
+
+            System.out.println("Staring the alarm notification");
+            alert.startAlarm();
+            alarmTriggered = true;
+        }
+    }
+
+
+
     // TODO: This is temporary
     private void countDownRunner() {
         //Declare the timer
-        Timer t = new Timer();
+        timer = new Timer();
+        minutes = 0;
+        seconds = 4;
+        clickReminderView.setVisibility(View.INVISIBLE);
+
         //Set the schedule function and rate
-        t.scheduleAtFixedRate(new TimerTask() {
+        timer.scheduleAtFixedRate(new TimerTask() {
 
             @Override
             public void run() {
@@ -136,14 +190,24 @@ public class MainActivity extends AppCompatActivity {
                             countDownView.setText("NOW!");
                             clickReminderView.setVisibility(View.VISIBLE);
                             medicineTaken = true;
+                            missedTime = (int) getCurrentTime();
+                            //triggerAlarm();
+                            //alarmTriggered = true;
                             signal_alert(true);
+                        }
+                        if (minutes == 0 && seconds == 0) {
+                            // This is when we run alert notification
+                            startAlert();
                         }
                         if(seconds == 0)
                         {
-                            clickReminderView.setVisibility(View.INVISIBLE);
                             countDownView.setText(String.valueOf(minutes)+" : "+String.valueOf(seconds));
                             seconds=60;
                             minutes=minutes-1;
+                        }
+
+                        if (getCurrentTime() - missedTime > 1800) {
+                            triggerMissMedicine();
                         }
                     }
 
@@ -153,24 +217,94 @@ public class MainActivity extends AppCompatActivity {
         }, 0, 1000);
     }
 
+    private void startAlert() {
+        System.out.println("OOO: Startinng the alert");
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+1*1000;
+
+        Intent alertIntent = new Intent(this, AlertReceiver.class);
+
+        AlarmManager alarmManager = (AlarmManager)
+                getSystemService(Context.ALARM_SERVICE);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
+                PendingIntent.getBroadcast(this, 1, alertIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+    }
+
+    private void triggerMissMedicine() {
+        if (closestMedicine != null) {
+            String drugName = closestMedicine.getMedicineName();
+            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            String time = Integer.toString((int)getCurrentTime());
+            sendMedicationData(drugName, date, time);
+
+        }
+    }
+
+
 
     public void onReminderClicked(View view){
         if (medicineTaken) {
             // Make a rest call indicating the medicine indicated has been taken.
             if (closestMedicine != null){
                 // Sends the request with closest Medicine name
+                //sendMedicationData();
 
                 closestMedicine = null;
                 signal_alert(false);
-                run_countdown();
+                //TODO:run_countdown();
+
+            timer.cancel();
+            countDownRunner();
             }
 
             medicineTaken = false;
         }
         else {
             // Open the new activity to show all the reminders
+            Intent allReminders = new Intent(getApplicationContext(), AllReminderActivity.class);
+            allReminders.putExtra(ALL_PRESCRIPTIONS, prescriptions);
+            startActivity(allReminders);
         }
     }
+
+    private void sendMedicationData(final String drugName, final String date1, final String time){
+
+        System.out.println("Sending the medication data...");
+        String sendingURL = URL + "/";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, sendingURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String res) {
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        System.out.println("Couldn't feed request from the server");
+
+
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                //Creating parameters
+                Map<String,String> params = new Hashtable<String, String>();
+
+                //Adding parameters
+                params.put(DRUG_NAME, drugName);
+                params.put(DATE, date1);
+                params.put(TIME, time);
+
+                //returning parameters
+                return params;
+            }
+        };
+    }
+
     private void run_countdown(){
         // Make REST call here to get all the prescriptions and populate the array.
         String requestURL = URL+"/reminders";
@@ -255,9 +389,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signal_alert(boolean is_alert){
-        LinearLayout count_down = (LinearLayout) findViewById(R.id.reminder);
-        colorFade = ObjectAnimator.ofObject(count_down, "backgroundColor", new ArgbEvaluator(), Color.parseColor("#F9423A"), Color.parseColor("#ffffff"));
-        colorFade.setDuration(1000);
+
         if (is_alert) {
             colorFade.start();
         }
@@ -284,6 +416,10 @@ public class MainActivity extends AppCompatActivity {
             uploadImageAndGetResponse(bmapPhoto);
         }
     }
+
+
+
+
 
     //Uploads image to the server, gets the response and stores it in the global response variable
     private void uploadImageAndGetResponse(Bitmap photo) {

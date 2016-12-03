@@ -20,3 +20,9 @@ class Mongo_Client(object):
 
 	def CreateNewUser(self, data):
 		self.db[self.collection].insert_one(data)
+
+
+	def GetFamily(self, user):
+		cursor = self.db[self.collection].find()
+		return cursor[0]['ice']
+
