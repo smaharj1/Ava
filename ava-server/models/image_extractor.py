@@ -29,7 +29,12 @@ class Medicine_Name_Extractor(object):
             }]
         })
         response = service_request.execute()
-        labelInfo = response['responses'][0]['textAnnotations'];
+        
+        try:
+            labelInfo = response['responses'][0]['textAnnotations'];
+        except:
+            return []
+
         labels = [x['description'] for x in labelInfo];
         
         return labels
@@ -39,8 +44,8 @@ class Medicine_Name_Extractor(object):
     def getMedicineName(imgUrl):
         medicineLabels = Medicine_Name_Extractor.getMedicineLabels(imgUrl);
         medicineList = {}
-        with open("../data/drug_names") as medicineFile:
-            medicineList = json.load(data_file)
+        with open("./data/drug_names") as medicineFile:
+            medicineList = json.load(medicineFile)
 
         for label in medicineLabels:
             if label.upper() in medicineList:

@@ -1,15 +1,17 @@
 from googleplaces import GooglePlaces, types, lang
+import googlemaps
 
 API_KEY = "AIzaSyAGGXKLGRwsE2yNDtSVoX6jm4CMTsVzMYU"
 
 
-class Hospital_Locator:    
+class Hospital_Locator(object):    
     
     google_places = GooglePlaces(API_KEY)
+    gmaps = googlemaps.Client(API_KEY)
     
     @staticmethod
     def findNearestHospital(location):
-        geoLocation = {"lat":location[0],"lng":location[1]}
+        geoLocation = location
         query_result = Hospital_Locator.google_places.nearby_search(
         lat_lng=geoLocation, types=[types.TYPE_HOSPITAL]);
         hospital = query_result.places[0];
@@ -23,6 +25,6 @@ class Hospital_Locator:
 
     @staticmethod
     def getCurrentLocation(location):
-        myLoc = google_places.latlng_to_address(location[0],location[1])
+        myLoc = Hospital_Locator.gmaps.reverse_geocode(location)
         return myLoc
 
