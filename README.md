@@ -5,7 +5,7 @@ Ava tears down the barriers that separate people in need from effective and time
 This is solely dedicated to Dr. Scott E. Frees, Professor of Computer Science at Ramapo College of New Jersey, Lehigh Alum, and heart of our hearts.  
 
 ## What it does
-Ava is an application that breaks down these barriers in two ways: increasing consistency and accuracy of self medication, and increasing response time and effectiveness of emergency treatment.
+Ava is an application that breaks down these barriers in two ways: increasing consistency and accuracy of self medication, and increasing response time and effectiveness of emergency treatment. It can track your medications by just taking of picture of it and reminds you when to take it. Also, it can help you find emergency medical care in medical emergencies and also send an automated text toa ll you emergency contacts with your location.
 
 ## How we built it
 The most critical part of our building process wasn't any of the tools, languages, or systems that we used, but effective teamwork.  We split up the work load and synchronized our progress through Github and by using other source control tools provided by Python, such as virtual environments and req freezing.
@@ -25,3 +25,6 @@ We learned a ton about the tools that we used, whether it was sending and receiv
 
 ## What's next for Ava
 Ava can only move forward.  Hopefully she will save some lives!
+
+##2nd place winner at Lehigh Hacks Fall 2016
+##Best Medical Hack by Knowledgent, Lehigh Hacks 2016
