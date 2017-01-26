@@ -3,9 +3,9 @@ import pymongo as pm
 
 class Mongo_Client(object):
 
-	def __init__(self, db_address='mongodb://localhost:27017/', 
-					db_name="Ava",
-					collection="UserData"):
+	def __init__(self, db_address='mongodb://ava:ava123@ds050739.mlab.com:50739/ava', 
+					db_name="ava",
+					collection="users"):
 		self.client = pm.MongoClient(db_address)
 		self.db = self.client[db_name]
 		self.collection = collection

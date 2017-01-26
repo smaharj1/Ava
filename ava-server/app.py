@@ -82,7 +82,7 @@ def CreateNewUser():
 								 'time' : [9, 30],
 								 'times_missed' : 0 },
 								 {'medication' : 'Adderall',
-								 'time' : [17, 0],
+								 'time' : [18, 0],
 								 'times_missed' : 0}],
 							"Friday":[
 							{'medication' : 'Adderall',
@@ -112,6 +112,9 @@ def CreateNewUser():
 								 'times_missed' : 0},
 								 {'medication' : 'Adderall',
 								 'time' : [17, 0],
+								 'times_missed' : 0},
+								 {'medication' : 'Adderall',
+								 'time' : [17, 30],
 								 'times_missed' : 0}],
 							"Sunday":[
 							{'medication' : 'Adderall',
@@ -130,6 +133,10 @@ def CreateNewUser():
 							{
 								'name' : "Sujil",
 								'number' : '+12016754068'
+							},
+							{
+								'name' : "Viveckh",
+								'number' : '+12016757849'
 							}
 						]})
 	return json.dumps({})
@@ -149,6 +156,7 @@ def GetMedicine():
 
 	print(labels)
 	db.AddPrescription(labels)
+	print(labels)
 
 	return json.dumps(labels)
 
@@ -173,12 +181,12 @@ def GetReminders():
 
 @app.route('/nextReminder', methods=['GET'])
 def GetNextReminder():
-
 	day = DOW[datetime.date.today().weekday()]
 	time = datetime.datetime.now()
 	t = time.strftime("%H %M")
 	t = [int(x) for x in t.split()]
 	data = db.GetRemindersByDay(day)
+	print("data:")
 	print(data)
 	if data == []:
 		return json.dumps({})
