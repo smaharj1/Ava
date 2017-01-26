@@ -66,14 +66,14 @@ public class MainActivity extends AppCompatActivity {
     final CountDownLatch latch = new CountDownLatch(10);
     private int seconds = 4;
     private int minutes = 0;
-    private final String URL = "http://569859e8.ngrok.io";
+    //private final String URL = "http://e4d6acf6.ngrok.io";
     private final String ALL_PRESCRIPTIONS = "prescriptions";
 
     private ArrayList<Medicine> prescriptions;
     Medicine closestMedicine = null;
     private static final int CAMERA_REQUEST = 1888;
     //Details to upload picture to the server
-    private String UPLOAD_URL = "http://569859e8.ngrok.io/medicine";
+    private String UPLOAD_URL = ClientServer.URL + "/medicine";
     //private String UPLOAD_URL = "http://69649754.ngrok.io/medicine";
     private String KEY_IMAGE = "image";
     private String KEY_NAME = "name";
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
     private void sendMedicationData(final String drugName, final String date1, final String time){
 
         System.out.println("Sending the medication data...");
-        String sendingURL = URL + "/";
+        String sendingURL = ClientServer.URL + "/";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, sendingURL,
                 new Response.Listener<String>() {
                     @Override
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getNewData() {
         // Make REST call here to get all the prescriptions and populate the array.
-        String requestURL = URL+"/nextReminder";
+        String requestURL = ClientServer.URL+"/nextReminder";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
                 new Response.Listener<String>() {
                     @Override
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void run_countdown(){
         // Make REST call here to get all the prescriptions and populate the array.
-        String requestURL = URL+"/nextReminder";
+        String requestURL = ClientServer.URL+"/nextReminder";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
                 new Response.Listener<String>() {
                     @Override

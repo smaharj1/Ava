@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class AllReminderActivity extends AppCompatActivity {
     private ArrayList<Medicine> prescriptions;
-    private final String URL = "http://569859e8.ngrok.io";
+    //private final String URL = "http://e4d6acf6.ngrok.io";
 
 
 
@@ -39,7 +39,7 @@ public class AllReminderActivity extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(this);;
         // Make REST call here to get all the prescriptions and populate the array.
-        String requestURL = URL+"/getReminders";
+        String requestURL = ClientServer.URL+"/getReminders";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
                 new Response.Listener<String>() {
                     @Override

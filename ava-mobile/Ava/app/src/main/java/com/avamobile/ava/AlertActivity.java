@@ -19,9 +19,9 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class AlertActivity extends Activity {
+    //private final String URL = "http://e4d6acf6.ngrok.io";
 
-    private final String PANIC_URL = "http://569859e8.ngrok.io/panic";
-    private final String URL = "http://569859e8.ngrok.io";
+    private final String PANIC_URL = ClientServer.URL + "/panic";
     private String responseData = "Empty Panic Response";
     private String LONGITUDE = "lng";
     private String LATITUDE = "lat";
@@ -67,7 +67,7 @@ public class AlertActivity extends Activity {
     }
 
     public void findNearestHospital(final double latitude, final double longitude) {
-        String reqURL = URL+"/nearestHospital";
+        String reqURL = ClientServer.URL +"/nearestHospital";
         //Making requests to server for Panic Info
         StringRequest stringRequest = new StringRequest(Request.Method.POST, reqURL,
                 new Response.Listener<String>() {
