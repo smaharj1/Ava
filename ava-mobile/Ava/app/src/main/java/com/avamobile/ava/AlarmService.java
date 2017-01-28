@@ -8,12 +8,14 @@ import android.content.Intent;
 import java.util.Calendar;
 
 /**
- * Created by MLH-Admin on 12/3/2016.
+ * AlarmService class provides necessary features to set the alarm for notifying users about scheduled events
+ * Author: Sujil Maharjan
  */
 
 public class AlarmService {
     private Context context;
     private PendingIntent mAlarmSender;
+
     public AlarmService(Context context) {
         this.context = context;
         mAlarmSender = PendingIntent.getBroadcast(context, 0, new Intent(context, AlertReceiver.class), 0);
