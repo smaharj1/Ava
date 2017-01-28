@@ -46,7 +46,7 @@ public class PanicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alert);
+        setContentView(R.layout.layout_load_screen);
 
 
         // Making requests to server for Panic Info
@@ -82,6 +82,7 @@ public class PanicActivity extends AppCompatActivity {
 
 
 
+
     }
 
     /**
@@ -96,7 +97,8 @@ public class PanicActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
-
+                        // Since the necessary info is received, change the layout to the main activity alert.
+                        setContentView(R.layout.activity_alert);
 
                         JsonElement jelement = new JsonParser().parse(res);
                         JsonObject jobject = jelement.getAsJsonObject();
