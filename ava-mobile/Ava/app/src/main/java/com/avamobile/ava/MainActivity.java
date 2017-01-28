@@ -40,6 +40,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.entry_logo);
         animation = new AnimatorSet();
-
-
 
         // Initiate the animation for the application. It initiates the app with 3 second delay.
         new CountDownTimer(4000,1000){
@@ -472,7 +476,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //startCamera = false;
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-            System.out.println("Got picture");
+            //System.out.println("Got picture");
             Bitmap bmapPhoto = (Bitmap) data.getExtras().get("data");
 
             //Response of image processing from the server
@@ -488,6 +492,7 @@ public class MainActivity extends AppCompatActivity {
         final String encodedImage = encodeImage(photo);
         System.out.println("Encoded Image: " + encodedImage);
 
+
         //Making requests to server
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
                 new Response.Listener<String>() {
@@ -496,7 +501,7 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println(res);
                         responseData = res;
                         //Showing toast message of the response
-                        Toast.makeText(MainActivity.this, res , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), res , Toast.LENGTH_LONG).show();
 
                         //Put the photo data returned into the server and start a new activity
                         Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
@@ -539,6 +544,8 @@ public class MainActivity extends AppCompatActivity {
         //Adding request to the queue
         requestQueue.add(stringRequest);
 
+        setContentView(R.layout.layout_load_screen);
+
     }
 
     //Encodes the Bitmap image to string
@@ -552,7 +559,7 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageBytes = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.URL_SAFE);
         return encodedImage;
     }
 
