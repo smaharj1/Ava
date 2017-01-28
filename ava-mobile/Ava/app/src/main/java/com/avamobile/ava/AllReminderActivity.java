@@ -18,25 +18,27 @@ import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 
+/**
+ * This activity will display all the reminders there are.
+ */
 public class AllReminderActivity extends AppCompatActivity {
+    // It holds all the prescriptions the client has.
     private ArrayList<Medicine> prescriptions;
-    //private final String URL = "http://e4d6acf6.ngrok.io";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_reminder);
 
+        // Gets all the data from the server.
         getAllData();
-
-
-
     }
 
+    /**
+     * Gets all the data from the server for the user.
+     */
     public void getAllData() {
-
+        // Makes an API call to the server requesting for all the reminders.
         RequestQueue queue = Volley.newRequestQueue(this);;
         // Make REST call here to get all the prescriptions and populate the array.
         String requestURL = ClientServer.URL+"/getReminders";
@@ -72,6 +74,10 @@ public class AllReminderActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    /**
+     * Converts the medicine to the string.
+     * @return Returns the array of medicine in the form of string.
+     */
     private ArrayList<String> converToString() {
         ArrayList<String> result = new ArrayList<>();
 
@@ -84,17 +90,22 @@ public class AllReminderActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     * Parses the JSON response and puts it in the form of array of Medicine object.
+     * @param jsonLine It holds the JSON response.
+     * @return Returns the arraylist of Medicine.
+     */
     public ArrayList<Medicine> parse(String jsonLine) {
         JsonElement jelement = new JsonParser().parse(jsonLine);
         JsonObject jobject = jelement.getAsJsonObject();
-        //jobject = jobject.getAsJsonObject("items");
         JsonArray jarray = jobject.getAsJsonArray("reminders");
 
         ArrayList<Medicine> result = new ArrayList<>();
-        //if(result.isEmpty()) return null;
         String drugName;
         int nextTime;
 
+        // Loops through the JSON array from the API call response and then adds them to the main
+        // arraylist.
         for (int i = 0; i < jarray.size(); i++) {
             jobject = jarray.get(i).getAsJsonObject();
             drugName = jobject.get("name").toString();

@@ -6,9 +6,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -51,7 +49,6 @@ import com.android.volley.AuthFailureError;
 import java.io.ByteArrayOutputStream;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
@@ -59,47 +56,48 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
 
+/**
+ * This is the main activity where magic happens. It handles some logic of the page like reminders and camera activity.
+ */
 public class MainActivity extends AppCompatActivity {
-
-    final CountDownLatch latch = new CountDownLatch(10);
-    private int seconds = 4;
-    private int minutes = 0;
-    //private final String URL = "http://e4d6acf6.ngrok.io";
-    private final String ALL_PRESCRIPTIONS = "prescriptions";
-
-    private ArrayList<Medicine> prescriptions;
-    Medicine closestMedicine = null;
     private static final int CAMERA_REQUEST = 1888;
+
     //Details to upload picture to the server
-    private String UPLOAD_URL = ClientServer.URL + "/medicine";
-    //private String UPLOAD_URL = "http://69649754.ngrok.io/medicine";
-    private String KEY_IMAGE = "image";
-    private String KEY_NAME = "name";
+    private final String UPLOAD_URL = ClientServer.URL + "/medicine";
+    private final String KEY_IMAGE = "image";
+    private final String KEY_NAME = "name";
     private final String DRUG_NAME ="name";
     private final String DATE = "date";
     private final String TIME = "time";
+
+    // Holds the seconds and minutes.
+    private int seconds = 4;
+    private int minutes = 0;
+
+    // It holds the closest medicine that needs to be reminded of.
+    Medicine closestMedicine = null;
+
     private String responseData = "Empty";   //To restore responses from the server
 
     private RequestQueue queue;
     private Queue<Medicine> reminderInQueue = new LinkedList<>() ;
 
+    // It holds the countdown view and everything.
     private TextView countDownView;
     private TextView clickReminderView;
 
     boolean medicineTaken = false;
-    boolean alarmTriggered = false;
     private int missedTime = -1;
 
+    // Handles the color fading alert once the reminder is hit.
     ObjectAnimator colorFade;
 
+    // It holds the timer.
     Timer timer;
 
+    // It does the magic animation.
     AnimatorSet animation;
-    AlarmService alert;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // Initiate the animation for the application.
+        // Initiate the animation for the application. It initiates the app with 3 second delay.
         new CountDownTimer(4000,1000){
 
             @Override
@@ -127,29 +125,24 @@ public class MainActivity extends AppCompatActivity {
                 colorFade = ObjectAnimator.ofObject(count_down, "backgroundColor", new ArgbEvaluator(), Color.parseColor("#F9423A"), Color.parseColor("#ffffff"));
                 colorFade.setDuration(1000);
 
-                //alert = new AlarmService(getApplicationContext());
-                // On clicking the camera button, start the Camera and wait for user to take a picture
-                Button add_medicine = (Button) findViewById(R.id.add_medicine);
-                add_medicine.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                    }
-                });
-
-
                 countDownView = (TextView) findViewById(R.id.count_down);
                 clickReminderView = (TextView) findViewById(R.id.click_message);
+
                 // Runs the count down on the screen
                 run_countdown();
-                //countDownRunner();
             }
         }.start();
 
     }
 
-
+    /**
+     * Event Handler: When adding medicine button is clicked.
+     * @param view
+     */
+    public void addMedicine(View view) {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+    }
 
     // TODO: Creating notification
     public void triggerAlarm(){
@@ -184,75 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    // TODO: This is temporary
-    private void countDownRunner() {
-        //Declare the timer
-        timer = new Timer();
-        minutes = 0;
-        seconds = 4;
-        clickReminderView.setVisibility(View.INVISIBLE);
-
-        //Set the schedule function and rate
-        timer.scheduleAtFixedRate(new TimerTask() {
-
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        countDownView.setText(String.valueOf(minutes)+":"+String.valueOf(seconds));
-                        seconds -= 1;
-
-                        if( minutes < 0){
-                            countDownView.setText("NOW!");
-                            clickReminderView.setVisibility(View.VISIBLE);
-                            medicineTaken = true;
-                            //triggerAlarm();
-                            //alarmTriggered = true;
-                            signal_alert(true);
-                        }
-                        if (minutes == 0 && seconds == 0) {
-                            // This is when we run alert notification
-                            //startAlert();
-                            triggerAlarm();
-                            missedTime = (int) getCurrentTime();
-
-                        }
-                        if(seconds == 0)
-                        {
-                            countDownView.setText(String.valueOf(minutes)+" : "+String.valueOf(seconds));
-                            seconds=60;
-                            minutes=minutes-1;
-                        }
-
-                        if (getCurrentTime() - missedTime > 1800) {
-                            triggerMissMedicine();
-                        }
-                    }
-
-                });
-            }
-
-        }, 0, 1000);
-    }
-
-    // TODO: not running right now
-    public void startAlert(View view) {
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+1*1000;
-        System.out.println("OOO: Startinng the alert" + alertTime);
-
-        Intent alertIntent = new Intent(this, AlertReceiver.class);
-
-        AlarmManager alarmManager = (AlarmManager)
-                getSystemService(Context.ALARM_SERVICE);
-
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, 2000,
-                PendingIntent.getBroadcast(this, 1, alertIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT));
-    }
-
+    /**
+     * Triggers when the medicine is missed and sends the data to server.
+     */
     private void triggerMissMedicine() {
         if (closestMedicine != null) {
             String drugName = closestMedicine.getMedicineName();
@@ -263,12 +190,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Triggers when the reminder on the screen is clicked. It will only make changes if medicine is due.
+     * @param view
+     */
     public void onReminderClicked(View view){
         if (medicineTaken) {
-            // Make a rest call indicating the medicine indicated has been taken.
-            //if (closestMedicine != null){
-            // Sends the request with closest Medicine name
-            //sendMedicationData();
 
             closestMedicine = null;
             signal_alert(false);
@@ -277,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
             timer.cancel();
             //countDownRunner();
             run_countdown();
-            //}
 
             medicineTaken = false;
         }
@@ -289,6 +215,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sends the medication data that was missed to the server.
+     * @param drugName It holds the name of the drug.
+     * @param date1 It holds the date
+     * @param time It holds the time
+     */
     private void sendMedicationData(final String drugName, final String date1, final String time){
 
         System.out.println("Sending the medication data...");
@@ -297,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
-
+                        // No response needed for this.
 
                     }
                 },
@@ -309,6 +241,11 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }){
+            /**
+             * Sends the drug data as a body parameter for date, name and time.
+             * @return
+             * @throws AuthFailureError
+             */
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
 
@@ -326,7 +263,11 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-
+    /**
+     * Parses the response to get one medication details
+     * @param response It holds the response from the REST call.
+     * @return
+     */
     public Medicine parseOne(String response) {
         JsonElement jelement = new JsonParser().parse(response);
         JsonObject jobject = jelement.getAsJsonObject();
@@ -343,6 +284,9 @@ public class MainActivity extends AppCompatActivity {
         return new Medicine(medication, totalTime);
     }
 
+    /**
+     * Makes REST call to get one prescription and populates the array.
+     */
     private void getNewData() {
         // Make REST call here to get all the prescriptions and populate the array.
         String requestURL = ClientServer.URL+"/nextReminder";
@@ -351,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String res) {
                         System.out.println("The response is "+ res);
-                        //Medicine receivedDrug = parse(res);
+
                         // Gets the closest one of the reminder drug from the list and displays the countdown
                         Medicine temp = parseOne(res);
 
@@ -372,6 +316,10 @@ public class MainActivity extends AppCompatActivity {
 
         queue.add(stringRequest);
     }
+
+    /**
+     * Runs the main countdown.
+     */
     private void run_countdown(){
         // Make REST call here to get all the prescriptions and populate the array.
         String requestURL = ClientServer.URL+"/nextReminder";
@@ -381,7 +329,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String res) {
                         System.out.println("The response is "+ res);
                         //Medicine receivedDrug = parse(res);
-                        // Gets the closest one of the reminder drug from the list and displays the countdown
                         closestMedicine = parseOne(res);
                         reminderInQueue.add(closestMedicine);
 
@@ -455,11 +402,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         queue.add(stringRequest);
-
-
-
     }
 
+    /**
+     * Displays the time in AM or PM.
+     * @param targetTime It is the target time to take the medicine.
+     */
     public void displayTime(int targetTime) {
         String text = "AM";
         int hours = targetTime /3600;
@@ -473,6 +421,11 @@ public class MainActivity extends AppCompatActivity {
         clickReminderView.setText(text);
     }
 
+    /**
+     * Parses all the medicine from JSON response and puts it in the arraylist.
+     * @param jsonLine
+     * @return
+     */
     public ArrayList<Medicine> parse(String jsonLine) {
         JsonElement jelement = new JsonParser().parse(jsonLine);
         JsonObject jobject = jelement.getAsJsonObject();
@@ -494,6 +447,10 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     * It signals the alert.
+     * @param is_alert
+     */
     private void signal_alert(boolean is_alert){
 
         if (is_alert) {
@@ -524,10 +481,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-    //Uploads image to the server, gets the response and stores it in the global response variable
+    /**
+     *  ploads image to the server, gets the response and stores it in the global response variable
+     */
     private void uploadImageAndGetResponse(Bitmap photo) {
         final String encodedImage = encodeImage(photo);
         System.out.println("Encoded Image: " + encodedImage);
@@ -586,6 +542,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Encodes the Bitmap image to string
+
+    /**
+     * Encodes the Bitmap image to a string
+     * @param photo It is the bitmap image.
+     * @return Returns the base 64 equivalent of the image.
+     */
     private String encodeImage(Bitmap photo) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -594,6 +556,10 @@ public class MainActivity extends AppCompatActivity {
         return encodedImage;
     }
 
+    /**
+     * Handles the emergency situation.
+     * @param view
+     */
     public void panic_clicked(View view){
 
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
@@ -611,7 +577,7 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent alertActivity = new Intent(getApplicationContext(),AlertActivity.class);
+                        Intent alertActivity = new Intent(getApplicationContext(),PanicActivity.class);
                         startActivity(alertActivity);
 
                     }
@@ -620,8 +586,6 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
 
     }
-
-
 
     /**
      * Gets time in seconds.

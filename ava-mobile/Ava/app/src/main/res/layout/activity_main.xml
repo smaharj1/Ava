@@ -75,7 +75,8 @@
         android:layout_marginBottom="20dp"
         android:textSize="30sp"
         android:textColor="@android:color/background_light"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:onClick="addMedicine" />
 
     <Button
         android:text="My prescriptions"
