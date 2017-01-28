@@ -492,6 +492,7 @@ public class MainActivity extends AppCompatActivity {
         final String encodedImage = encodeImage(photo);
         System.out.println("Encoded Image: " + encodedImage);
 
+        setContentView(R.layout.layout_load_screen);
 
         //Making requests to server
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
@@ -544,11 +545,8 @@ public class MainActivity extends AppCompatActivity {
         //Adding request to the queue
         requestQueue.add(stringRequest);
 
-        setContentView(R.layout.layout_load_screen);
 
     }
-
-    //Encodes the Bitmap image to string
 
     /**
      * Encodes the Bitmap image to a string
@@ -559,7 +557,7 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageBytes = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.URL_SAFE);
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;
     }
 
