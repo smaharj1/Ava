@@ -5,7 +5,7 @@ package com.avamobile.ava;
  */
 
 public class ClientServer {
-    public static final String URL = "http://e4d6acf6.ngrok.io";
+    public static final String URL = "http://fc014b4e.ngrok.io";
 
     private ClientServer() {
 

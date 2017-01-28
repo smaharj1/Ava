@@ -63,18 +63,17 @@ import java.util.concurrent.CountDownLatch;
 
 public class MainActivity extends AppCompatActivity {
 
-    final CountDownLatch latch = new CountDownLatch(10);
+    //final CountDownLatch latch = new CountDownLatch(10);
     private int seconds = 4;
     private int minutes = 0;
     //private final String URL = "http://e4d6acf6.ngrok.io";
-    private final String ALL_PRESCRIPTIONS = "prescriptions";
+    //private final String ALL_PRESCRIPTIONS = "prescriptions";
 
-    private ArrayList<Medicine> prescriptions;
+    //private ArrayList<Medicine> prescriptions;
     Medicine closestMedicine = null;
     private static final int CAMERA_REQUEST = 1888;
     //Details to upload picture to the server
     private String UPLOAD_URL = ClientServer.URL + "/medicine";
-    //private String UPLOAD_URL = "http://69649754.ngrok.io/medicine";
     private String KEY_IMAGE = "image";
     private String KEY_NAME = "name";
     private final String DRUG_NAME ="name";
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView clickReminderView;
 
     boolean medicineTaken = false;
-    boolean alarmTriggered = false;
+    //boolean alarmTriggered = false;
     private int missedTime = -1;
 
     ObjectAnimator colorFade;
@@ -97,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
     Timer timer;
 
     AnimatorSet animation;
-    AlarmService alert;
 
 
 
@@ -141,9 +139,9 @@ public class MainActivity extends AppCompatActivity {
 
                 countDownView = (TextView) findViewById(R.id.count_down);
                 clickReminderView = (TextView) findViewById(R.id.click_message);
+
                 // Runs the count down on the screen
                 run_countdown();
-                //countDownRunner();
             }
         }.start();
 
@@ -184,74 +182,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    // TODO: This is temporary
-    private void countDownRunner() {
-        //Declare the timer
-        timer = new Timer();
-        minutes = 0;
-        seconds = 4;
-        clickReminderView.setVisibility(View.INVISIBLE);
-
-        //Set the schedule function and rate
-        timer.scheduleAtFixedRate(new TimerTask() {
-
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        countDownView.setText(String.valueOf(minutes)+":"+String.valueOf(seconds));
-                        seconds -= 1;
-
-                        if( minutes < 0){
-                            countDownView.setText("NOW!");
-                            clickReminderView.setVisibility(View.VISIBLE);
-                            medicineTaken = true;
-                            //triggerAlarm();
-                            //alarmTriggered = true;
-                            signal_alert(true);
-                        }
-                        if (minutes == 0 && seconds == 0) {
-                            // This is when we run alert notification
-                            //startAlert();
-                            triggerAlarm();
-                            missedTime = (int) getCurrentTime();
-
-                        }
-                        if(seconds == 0)
-                        {
-                            countDownView.setText(String.valueOf(minutes)+" : "+String.valueOf(seconds));
-                            seconds=60;
-                            minutes=minutes-1;
-                        }
-
-                        if (getCurrentTime() - missedTime > 1800) {
-                            triggerMissMedicine();
-                        }
-                    }
-
-                });
-            }
-
-        }, 0, 1000);
-    }
-
-    // TODO: not running right now
-    public void startAlert(View view) {
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+1*1000;
-        System.out.println("OOO: Startinng the alert" + alertTime);
-
-        Intent alertIntent = new Intent(this, AlertReceiver.class);
-
-        AlarmManager alarmManager = (AlarmManager)
-                getSystemService(Context.ALARM_SERVICE);
-
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, 2000,
-                PendingIntent.getBroadcast(this, 1, alertIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT));
-    }
 
     private void triggerMissMedicine() {
         if (closestMedicine != null) {
@@ -351,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String res) {
                         System.out.println("The response is "+ res);
-                        //Medicine receivedDrug = parse(res);
+
                         // Gets the closest one of the reminder drug from the list and displays the countdown
                         Medicine temp = parseOne(res);
 
@@ -372,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
 
         queue.add(stringRequest);
     }
+
     private void run_countdown(){
         // Make REST call here to get all the prescriptions and populate the array.
         String requestURL = ClientServer.URL+"/nextReminder";

@@ -20,9 +20,6 @@ import java.util.ArrayList;
 
 public class AllReminderActivity extends AppCompatActivity {
     private ArrayList<Medicine> prescriptions;
-    //private final String URL = "http://e4d6acf6.ngrok.io";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +27,6 @@ public class AllReminderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_all_reminder);
 
         getAllData();
-
-
-
     }
 
     public void getAllData() {
