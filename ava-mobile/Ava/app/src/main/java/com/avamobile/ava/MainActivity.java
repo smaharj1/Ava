@@ -587,8 +587,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
     /**
      * Gets time in seconds.
      * @return

@@ -2,6 +2,8 @@ package com.avamobile.ava;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -23,7 +25,7 @@ import java.util.Map;
  * this activity is triggered as a result of pressing the panic button.
  */
 
-public class PanicActivity extends Activity {
+public class PanicActivity extends AppCompatActivity {
     // REST call URI for panic.
     private final String PANIC_URL = ClientServer.URL + "/panic";
 
@@ -32,7 +34,7 @@ public class PanicActivity extends Activity {
     private final String mapURL = "http://ip-api.com/json";
 
     // It is the URI for nearest hospital.
-    private final String nearestHospitalURL = ClientServer.URL +"/nearestHospital";
+    //private final String nearestHospitalURL = ClientServer.URL +"/nearestHospital";
 
     private String LONGITUDE = "lng";
     private String LATITUDE = "lat";
@@ -90,36 +92,42 @@ public class PanicActivity extends Activity {
     public void findNearestHospital(final double latitude, final double longitude) {
 
         //Making requests to server for Panic Info
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, nearestHospitalURL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, PANIC_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
 
-                        if (true) {
-                            System.out.println("RES:" + res);
-                        }
-                        else {
-                            //System.out.println(res);
-                            JsonElement jelement = new JsonParser().parse(res);
-                            JsonObject jobject = jelement.getAsJsonObject();
 
-                            String hospitalName = jobject.get("name").toString();
-                            String loc = jobject.get("location").toString();
-                            String phn = jobject.get("phone").toString();
-                            String web = jobject.get("website").toString();
+                        JsonElement jelement = new JsonParser().parse(res);
+                        JsonObject jobject = jelement.getAsJsonObject();
 
-                            // Sets the text in the activity from the response of nearest hospital received.
-                            TextView tv = (TextView) findViewById(R.id.hospital);
-                            tv.setText(hospitalName);
-                            tv = (TextView) findViewById(R.id.location);
-                            tv.setText(loc);
-                            tv = (TextView) findViewById(R.id.phone);
-                            tv.setText(phn);
-                            tv = (TextView) findViewById(R.id.web);
-                            tv.setText(web);
-                        }
+                        String hospitalName = jobject.get("name").toString();
+                        hospitalName = hospitalName.substring(1, hospitalName.length()-1);
 
+                        String loc = jobject.get("location").toString();
+                        loc = loc.substring(1, loc.length()-1);
+
+                        String phn = jobject.get("phone").toString();
+                        phn = phn.substring(1, phn.length()-1);
+
+                        String web = jobject.get("website").toString();
+                        web = web.substring(1, web.length()-1);
+
+                        // Sets the text in the activity from the response of nearest hospital received.
+                        TextView tv = (TextView) findViewById(R.id.hospital);
+                        tv.setText(hospitalName);
+                        tv = (TextView) findViewById(R.id.location);
+                        tv.setText(loc);
+                        tv = (TextView) findViewById(R.id.phone);
+                        tv.setText(phn);
+                        tv = (TextView) findViewById(R.id.web);
+                        tv.setText(web);
+
+
+                        Snackbar mySnackbar = Snackbar.make(findViewById(R.id.myCoordinatorLayout), R.string.panic_sent, Snackbar.LENGTH_LONG);
+                        mySnackbar.show();
                     }
+
                 },
                 new Response.ErrorListener() {
                     @Override
