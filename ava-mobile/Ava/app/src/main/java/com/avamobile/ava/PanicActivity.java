@@ -96,7 +96,7 @@ public class PanicActivity extends Activity {
                     public void onResponse(String res) {
 
                         if (true) {
-                            System.out.println(res);
+                            System.out.println("RES:" + res);
                         }
                         else {
                             //System.out.println(res);
@@ -157,9 +157,6 @@ public class PanicActivity extends Activity {
         //Adding request to the queue
         requestQueue.add(stringRequest);
     }
-
-
-
 
     public void populateLatLng (String response){
         JsonElement jelement = new JsonParser().parse(response);
