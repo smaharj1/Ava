@@ -18,14 +18,26 @@ import com.google.gson.JsonParser;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class AlertActivity extends Activity {
-    //private final String URL = "http://e4d6acf6.ngrok.io";
+/**
+ * This activity handles the panic situation. If the patient has a medical emergency, then
+ * this activity is triggered as a result of pressing the panic button.
+ */
 
+public class PanicActivity extends Activity {
+    // REST call URI for panic.
     private final String PANIC_URL = ClientServer.URL + "/panic";
-    private String responseData = "Empty Panic Response";
+
+    // A easy REST call that can give the current location for the patient. It surpasses the
+    // complexity of android built in system.
+    private final String mapURL = "http://ip-api.com/json";
+
+    // It is the URI for nearest hospital.
+    private final String nearestHospitalURL = ClientServer.URL +"/nearestHospital";
+
     private String LONGITUDE = "lng";
     private String LATITUDE = "lat";
 
+    // It holds the latitude and longitude of the patient's location.
     public static double latitude=0;
     public static double longitude=0;
 
@@ -34,15 +46,19 @@ public class AlertActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alert);
 
-        String mapURL = "http://ip-api.com/json";
-        //Making requests to server for Panic Info
+
+        // Making requests to server for Panic Info
         StringRequest stringRequest = new StringRequest(Request.Method.GET, mapURL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
                         populateLatLng(res);
 
-                        sendToServer(latitude, longitude);
+                        // After the latitude and longitude is received, it finds the nearest hospital.
+                        // This also serves as a panic response to avoid unnecessary server calls.
+                        findNearestHospital(latitude, longitude);
+
+                        //sendToServer(latitude, longitude);
                     }
                 },
                 new Response.ErrorListener() {
@@ -66,30 +82,42 @@ public class AlertActivity extends Activity {
 
     }
 
+    /**
+     * Finds the nearest hospital from the patient's location.
+     * @param latitude It holds the latitude value.
+     * @param longitude It holds the longitude value.
+     */
     public void findNearestHospital(final double latitude, final double longitude) {
-        String reqURL = ClientServer.URL +"/nearestHospital";
+
         //Making requests to server for Panic Info
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, reqURL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, nearestHospitalURL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
-                        System.out.println(res);
-                        JsonElement jelement = new JsonParser().parse(res);
-                        JsonObject jobject = jelement.getAsJsonObject();
 
-                        String hospitalName = jobject.get("name").toString();
-                        String loc = jobject.get("location").toString();
-                        String phn = jobject.get("phone").toString();
-                        String web = jobject.get("website").toString();
+                        if (true) {
+                            System.out.println(res);
+                        }
+                        else {
+                            //System.out.println(res);
+                            JsonElement jelement = new JsonParser().parse(res);
+                            JsonObject jobject = jelement.getAsJsonObject();
 
-                        TextView tv = (TextView) findViewById(R.id.hospital);
-                        tv.setText(hospitalName);
-                        tv = (TextView) findViewById(R.id.location);
-                        tv.setText(loc);
-                        tv = (TextView) findViewById(R.id.phone);
-                        tv.setText(phn);
-                        tv = (TextView) findViewById(R.id.web);
-                        tv.setText(web);
+                            String hospitalName = jobject.get("name").toString();
+                            String loc = jobject.get("location").toString();
+                            String phn = jobject.get("phone").toString();
+                            String web = jobject.get("website").toString();
+
+                            // Sets the text in the activity from the response of nearest hospital received.
+                            TextView tv = (TextView) findViewById(R.id.hospital);
+                            tv.setText(hospitalName);
+                            tv = (TextView) findViewById(R.id.location);
+                            tv.setText(loc);
+                            tv = (TextView) findViewById(R.id.phone);
+                            tv.setText(phn);
+                            tv = (TextView) findViewById(R.id.web);
+                            tv.setText(web);
+                        }
 
                     }
                 },
@@ -102,6 +130,12 @@ public class AlertActivity extends Activity {
                         //Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
                     }
                 }) {
+
+            /**
+             * It holds parameters that need to be passed in the request call.
+             * @return
+             * @throws AuthFailureError
+             */
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
 
@@ -123,6 +157,26 @@ public class AlertActivity extends Activity {
         //Adding request to the queue
         requestQueue.add(stringRequest);
     }
+
+
+
+
+    public void populateLatLng (String response){
+        JsonElement jelement = new JsonParser().parse(response);
+        JsonObject jobject = jelement.getAsJsonObject();
+        //jobject = jobject.getAsJsonObject("items");
+        latitude = jobject.get("lat").getAsDouble();
+        longitude = jobject.get("lon").getAsDouble();
+        System.out.println(latitude+" "+ longitude);
+
+    }
+}
+
+
+/**************************************************************************
+ *********** UNUSED FUNCTIONS ******************************************
+ ************************************************************************/
+/*
     public void sendToServer(final double lat,final  double lng) {
         //Making requests to server for Panic Info
         StringRequest stringRequest = new StringRequest(Request.Method.POST, PANIC_URL,
@@ -162,18 +216,4 @@ public class AlertActivity extends Activity {
         //Adding request to the queue
         requestQueue.add(stringRequest);
     }
-
-    public void populateLatLng (String response){
-        JsonElement jelement = new JsonParser().parse(response);
-        JsonObject jobject = jelement.getAsJsonObject();
-        //jobject = jobject.getAsJsonObject("items");
-        latitude = jobject.get("lat").getAsDouble();
-        longitude = jobject.get("lon").getAsDouble();
-        System.out.println(latitude+" "+ longitude);
-
-    }
-
-
-
-
-}
+    */

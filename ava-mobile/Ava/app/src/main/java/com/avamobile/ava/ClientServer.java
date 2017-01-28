@@ -1,12 +1,16 @@
 package com.avamobile.ava;
 
 /**
- * Created by sujil on 1/26/2017.
+ * This holds the main Server call URL.
+ * Once it is in cloud, it will be changed to Azure.
  */
 
 public class ClientServer {
     public static final String URL = "http://fc014b4e.ngrok.io";
 
+    /**
+     * Making the constructor private because we don't need any object of this class.
+     */
     private ClientServer() {
 
     }

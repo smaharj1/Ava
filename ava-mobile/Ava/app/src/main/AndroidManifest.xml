@@ -49,7 +49,7 @@
             android:name=".AllReminderActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AlertActivity"
+            android:name=".PanicActivity"
             android:screenOrientation="portrait" />
 
     </application>

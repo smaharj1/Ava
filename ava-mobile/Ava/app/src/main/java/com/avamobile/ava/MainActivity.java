@@ -6,9 +6,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -51,7 +49,6 @@ import com.android.volley.AuthFailureError;
 import java.io.ByteArrayOutputStream;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
@@ -59,7 +56,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -542,7 +538,7 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent alertActivity = new Intent(getApplicationContext(),AlertActivity.class);
+                        Intent alertActivity = new Intent(getApplicationContext(),PanicActivity.class);
                         startActivity(alertActivity);
 
                     }
