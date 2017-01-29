@@ -90,6 +90,12 @@ public class ResultsActivity extends AppCompatActivity {
         System.out.println("Vector size weekdays: " + selectedWeekdays.size());
         System.out.println("Vector size times: " + selectedTimes.size());
 
+        String selec_weekdays = selectedWeekdays.toString();
+        String selec_times = selectedTimes.toString();
+
+        System.out.println(selec_weekdays);
+        System.out.println(selec_times);
+
         Toast.makeText(ResultsActivity.this, "The reminders have been set", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
