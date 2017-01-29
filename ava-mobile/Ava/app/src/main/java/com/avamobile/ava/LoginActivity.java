@@ -179,6 +179,7 @@ public class LoginActivity extends AppCompatActivity {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
+                        // If load was unsuccessful from the server side, then dismiss the progressDialog.
                         if (!loadSuccess) {
                             // On complete call either onLoginSuccess or onLoginFailed
                             onLoginFailed();
