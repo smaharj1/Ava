@@ -248,8 +248,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         System.out.println("Couldn't feed request from the server");
-
-
                     }
                 }){
             /**
@@ -596,6 +594,7 @@ public class MainActivity extends AppCompatActivity {
                 Map<String,String> headers = new Hashtable<String, String>();
 
                 //Adding parameters
+                System.out.println("ADD MED: " + userID);
                 headers.put(StaticNames.HEADER_USER_ID, userID);
 
                 //returning parameters
@@ -610,10 +609,10 @@ public class MainActivity extends AppCompatActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Creating a Request Queue
-        //RequestQueue requestQueue = Volley.newRequestQueue(this);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         //Adding request to the queue
-        queue.add(stringRequest);
+        requestQueue.add(stringRequest);
 
 
     }

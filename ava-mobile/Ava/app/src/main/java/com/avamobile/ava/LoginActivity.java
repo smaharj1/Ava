@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Holds the user id sent from the server so that it is sent for every HTTP requests
     private String userID;
+    private boolean loadSuccess;
 
 
     @Override
@@ -54,6 +55,8 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        loadSuccess = false;
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -82,12 +85,12 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        loginButton.setEnabled(false);
+        //loginButton.setEnabled(false);
 
         String email = usernameText.getText().toString();
         String password = passwordText.getText().toString();
 
-        // TODO: Implement your own authentication logic here.
+        // TODO: Implement authentication logic here.
 
         sendLoginInfo(email, password);
     }
@@ -124,8 +127,9 @@ public class LoginActivity extends AppCompatActivity {
                         else {
                             onLoginFailed();
                         }
-                        progressDialog.dismiss();
+                        loadSuccess = true;
 
+                        progressDialog.dismiss();
                     }
                 },
                 new Response.ErrorListener() {
@@ -161,6 +165,28 @@ public class LoginActivity extends AppCompatActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(loginRequest);
+
+
+        // Initiates time out in case of server waiting error
+        initiateTimeout(progressDialog);
+    }
+
+    /**
+     * This is an error handling case when the server does not respond for 3 seconds.
+     * @param progressDialog
+     */
+    public void initiateTimeout(final ProgressDialog progressDialog) {
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        if (!loadSuccess) {
+                            // On complete call either onLoginSuccess or onLoginFailed
+                            onLoginFailed();
+                            // onLoginFailed();
+                            progressDialog.dismiss();
+                        }
+                    }
+                }, 3000);
     }
 
     @Override

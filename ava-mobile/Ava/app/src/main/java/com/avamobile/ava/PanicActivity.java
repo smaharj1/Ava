@@ -56,7 +56,7 @@ public class PanicActivity extends AppCompatActivity {
 
         String extraMessage = getIntent().getStringExtra(StaticNames.USER_ID);
         System.out.println("Extra message is: " + extraMessage);
-        if (!extraMessage.isEmpty()) {
+        if (extraMessage != null) {
             userID = extraMessage;
         }
 
