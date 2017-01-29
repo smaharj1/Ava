@@ -10,14 +10,16 @@
     tools:context="com.avamobile.ava.ResultsActivity"
     android:orientation="vertical"
     android:id="@+id/mainContainer"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="@drawable/ava_background">
 
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        android:textColor="#FFFFFF">
 
 
         <TextView
@@ -28,7 +30,8 @@
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
             android:textSize="25sp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 
@@ -50,7 +53,8 @@
                 android:text="Select Dosage Reminders"
                 android:id="@+id/textView3"
                 android:textAlignment="center"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -64,19 +68,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sunday"
-                android:id="@+id/checkBox" />
+                android:id="@+id/checkBox"
+                android:textColor="@android:color/white"
+                android:buttonTint="@android:color/white"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Monday"
-                android:id="@+id/checkBox2" />
+                android:id="@+id/checkBox2"
+                android:textColor="@android:color/white"
+                android:buttonTint="@android:color/white"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tuesday"
-                android:id="@+id/checkBox3" />
+                android:id="@+id/checkBox3"
+                android:textColor="@android:color/white"
+                android:buttonTint="@android:color/white"/>
 
         </LinearLayout>
 
@@ -91,25 +101,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Wednesday"
-                android:id="@+id/checkBox4" />
+                android:id="@+id/checkBox4"
+                android:textColor="@android:color/white"
+                android:buttonTint="@android:color/white"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Thursday"
-                android:id="@+id/checkBox5" />
+                android:id="@+id/checkBox5"
+                android:textColor="@android:color/white"
+                android:buttonTint="@android:color/white"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Friday"
-                android:id="@+id/checkBox6" />
+                android:id="@+id/checkBox6"
+                android:textColor="@android:color/white"
+                android:buttonTint="@android:color/white"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Saturday"
-                android:id="@+id/checkBox7" />
+                android:id="@+id/checkBox7"
+                android:textColor="@android:color/white"
+                android:buttonTint="@android:color/white"/>
         </LinearLayout>
 
         <LinearLayout
@@ -126,7 +144,9 @@
                 android:id="@+id/textView7"
                 android:textAlignment="center"
                 android:textSize="24sp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:background="@layout/spinner_custom"
+                android:textColor="@android:color/white" />
 
             <Spinner
                 android:layout_width="299dp"
@@ -135,7 +155,8 @@
                 android:layout_gravity="center_horizontal"
                 android:entries="@array/times"
                 android:layout_weight="0.10"
-                android:textSize="22sp"/>
+                android:textSize="22sp"
+                android:color="@android:color/white"/>
 
             <Spinner
                 android:layout_width="299dp"
