@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
@@ -97,15 +99,17 @@ public class MainActivity extends AppCompatActivity {
     private int missedTime = -1;
 
     // Handles the color fading alert once the reminder is hit.
-    ObjectAnimator colorFade;
+    private ObjectAnimator colorFade;
 
     // It holds the timer.
-    Timer timer;
+    private Timer timer;
 
     // It does the magic animation.
-    AnimatorSet animation;
+    private AnimatorSet animation;
 
     private String userID;
+
+    private boolean loadSuccess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -542,20 +546,37 @@ public class MainActivity extends AppCompatActivity {
     private void uploadImageAndGetResponse(Bitmap photo) {
         final String encodedImage = encodeImage(photo);
 
+        // The progress load bar given.
+        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Processing...");
+        progressDialog.show();
+
         //Making requests to server
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
+                        JsonElement jelement = new JsonParser().parse(res);
+                        JsonObject jsonObject = jelement.getAsJsonObject();
 
-                        //System.out.println(res);
+                        boolean success= jsonObject.get("status").getAsBoolean();
+                        if (!success) {
+                            Snackbar mySnackbar = Snackbar.make(findViewById(R.id.mainLayout),
+                                    "Picture was not clear. Please take the picture again", Snackbar.LENGTH_LONG);
+                            mySnackbar.show();
+                            progressDialog.dismiss();
+                            return;
+                        }
 
                         responseData = res;
 
                         //Put the photo data returned into the server and start a new activity
                         Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
                         intent.putExtra("photoData", responseData);
+                        intent.putExtra(StaticNames.USER_ID, userID);
 
+                        progressDialog.dismiss();
                         startActivity(intent);
 
                     }
@@ -613,8 +634,22 @@ public class MainActivity extends AppCompatActivity {
 
         //Adding request to the queue
         requestQueue.add(stringRequest);
+    }
 
-
+    /**
+     * This is an error handling case when the server does not respond for 3 seconds.
+     * @param progressDialog
+     */
+    public void initiateTimeout(final ProgressDialog progressDialog) {
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // If load was unsuccessful from the server side, then dismiss the progressDialog.
+                        if (!loadSuccess) {
+                            progressDialog.dismiss();
+                        }
+                    }
+                }, 3000);
     }
 
     /**

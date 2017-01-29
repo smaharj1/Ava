@@ -9,7 +9,6 @@
     tools:context="com.avamobile.ava.PanicActivity">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
         android:id="@+id/activity_alert"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,7 +32,6 @@
             android:fontFamily="sans-serif" />
 
         <TextView
-            android:text="Loading..."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="19dp"
@@ -44,7 +42,6 @@
             android:layout_alignParentStart="true" />
 
         <TextView
-            android:text="Loading..."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/phone"
@@ -56,7 +53,6 @@
             android:textAlignment="center" />
 
         <TextView
-            android:text="Loading..."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -67,7 +63,6 @@
             android:layout_alignParentStart="true" />
 
         <TextView
-            android:text="Loading..."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="41dp"

@@ -1,5 +1,6 @@
 package com.avamobile.ava;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -48,10 +49,12 @@ public class PanicActivity extends AppCompatActivity {
     // Holds the id of the user
     private String userID;
 
+    private boolean callSuccess;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_load_screen);
+        setContentView(R.layout.activity_alert);
         requestQueue = Volley.newRequestQueue(this);
 
         String extraMessage = getIntent().getStringExtra(StaticNames.USER_ID);
@@ -59,6 +62,14 @@ public class PanicActivity extends AppCompatActivity {
         if (extraMessage != null) {
             userID = extraMessage;
         }
+
+        callSuccess = false;
+
+        // The progress load bar given.
+        final ProgressDialog progressDialog = new ProgressDialog(PanicActivity.this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Processing...");
+        progressDialog.show();
 
         // Making requests to server for Panic Info
         StringRequest stringRequest = new StringRequest(Request.Method.GET, mapURL,
@@ -69,7 +80,7 @@ public class PanicActivity extends AppCompatActivity {
 
                         // After the latitude and longitude is received, it finds the nearest hospital.
                         // This also serves as a panic response to avoid unnecessary server calls.
-                        findNearestHospital(latitude, longitude);
+                        findNearestHospital(latitude, longitude, progressDialog);
 
                         //sendToServer(latitude, longitude);
                     }
@@ -102,15 +113,15 @@ public class PanicActivity extends AppCompatActivity {
      * @param latitude It holds the latitude value.
      * @param longitude It holds the longitude value.
      */
-    public void findNearestHospital(final double latitude, final double longitude) {
-
+    public void findNearestHospital(final double latitude, final double longitude, final ProgressDialog progressDialog) {
+        progressDialog.setMessage("Sending info....");
         //Making requests to server for Panic Info
         StringRequest stringRequest = new StringRequest(Request.Method.POST, PANIC_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
                         // Since the necessary info is received, change the layout to the main activity alert.
-                        setContentView(R.layout.activity_alert);
+                        //setContentView(R.layout.activity_alert);
 
                         //System.out.println("PANIC RESPONSE" + res);
                         JsonElement jelement = new JsonParser().parse(res);
@@ -141,6 +152,9 @@ public class PanicActivity extends AppCompatActivity {
 
                         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.myCoordinatorLayout), R.string.panic_sent, Snackbar.LENGTH_LONG);
                         mySnackbar.show();
+
+                        callSuccess = true;
+                        progressDialog.dismiss();
                     }
 
                 },
@@ -198,6 +212,28 @@ public class PanicActivity extends AppCompatActivity {
 
         //Adding request to the queue
         requestQueue.add(stringRequest);
+
+        // Times out in case of an error
+        initiateTimeout(progressDialog);
+    }
+
+    /**
+     * This is an error handling case when the server does not respond for 5 seconds.
+     * @param progressDialog
+     */
+    public void initiateTimeout(final ProgressDialog progressDialog) {
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // If load was unsuccessful from the server side, then dismiss the progressDialog.
+                        if (!callSuccess) {
+                            // On complete call either onLoginSuccess or onLoginFailed
+
+                            progressDialog.dismiss();
+                            finish();
+                        }
+                    }
+                }, 5000);
     }
 
     public void populateLatLng (String response){
