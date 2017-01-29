@@ -58,8 +58,9 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
+            android:background="@layout/standard_button"
             android:text="Login"
-            android:textColor="#2d766c" />
+            android:textColor="@android:color/white" />
 
         <TextView android:id="@+id/link_signup"
             android:layout_width="fill_parent"
