@@ -5,5 +5,5 @@
     android:initialLayout="@layout/panic_appwidget"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
-    android:previewImage="@drawable/load">
+    android:previewImage="@drawable/ava_logo">
 </appwidget-provider>

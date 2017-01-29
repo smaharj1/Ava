@@ -16,7 +16,7 @@
         android:textStyle="bold"/>
 
     <Button
-        android:id="@+id/actionButton"
+        android:id="@+id/panicButton"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

@@ -39,7 +39,7 @@ public class AllReminderActivity extends AppCompatActivity {
      */
     public void getAllData() {
         // Makes an API call to the server requesting for all the reminders.
-        RequestQueue queue = Volley.newRequestQueue(this);;
+        RequestQueue queue = Volley.newRequestQueue(this);
         // Make REST call here to get all the prescriptions and populate the array.
         String requestURL = ClientServer.URL+"/getReminders";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
