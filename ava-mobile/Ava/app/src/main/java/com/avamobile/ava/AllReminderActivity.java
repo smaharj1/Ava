@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 public class AllReminderActivity extends AppCompatActivity {
     // It holds all the prescriptions the client has.
     private ArrayList<Medicine> prescriptions;
+    private RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class AllReminderActivity extends AppCompatActivity {
      */
     public void getAllData() {
         // Makes an API call to the server requesting for all the reminders.
-        RequestQueue queue = Volley.newRequestQueue(this);;
+        queue = Volley.newRequestQueue(this);
         // Make REST call here to get all the prescriptions and populate the array.
         String requestURL = ClientServer.URL+"/getReminders";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
@@ -70,6 +72,11 @@ public class AllReminderActivity extends AppCompatActivity {
 
             }
         });
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(stringRequest);
     }

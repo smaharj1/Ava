@@ -1,6 +1,5 @@
 package com.avamobile.ava;
 
-
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
@@ -29,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonArray;
@@ -265,6 +265,12 @@ public class MainActivity extends AppCompatActivity {
                 return params;
             }
         };
+
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     /**
@@ -317,6 +323,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(stringRequest);
     }
@@ -405,6 +417,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         queue.add(stringRequest);
     }
 
@@ -492,8 +510,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void uploadImageAndGetResponse(Bitmap photo) {
         final String encodedImage = encodeImage(photo);
-        System.out.println("Encoded Image: " + encodedImage);
-
 
         //Making requests to server
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
@@ -505,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
 
                         responseData = res;
                         //Showing toast message of the response
-                        Toast.makeText(getApplicationContext(), res , Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), res , Toast.LENGTH_LONG).show();
 
                         //Put the photo data returned into the server and start a new activity
                         Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
@@ -543,11 +559,17 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Creating a Request Queue
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        //RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         //Adding request to the queue
-        requestQueue.add(stringRequest);
+        queue.add(stringRequest);
 
 
     }
@@ -570,7 +592,7 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void panic_clicked(View view){
-
+        // Prompts the patient for if they are sure and not just pressed by mistake.
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Are you sure?");
         alertDialog.setMessage("");
@@ -578,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        // Do nothing.
 
                     }
                 });
