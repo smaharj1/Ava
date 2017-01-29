@@ -1,6 +1,5 @@
 package com.avamobile.ava;
 
-
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
@@ -29,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonArray;
@@ -108,11 +108,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.entry_logo);
+        setContentView(R.layout.activity_main);
         animation = new AnimatorSet();
 
         // Initiate the animation for the application. It initiates the app with 3 second delay.
-        new CountDownTimer(4000,1000){
+        new CountDownTimer(2000,1000){
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 //set the new Content of your activity
-                MainActivity.this.setContentView(R.layout.activity_main);
+                //MainActivity.this.setContentView(R.layout.activity_main);
 
                 queue = Volley.newRequestQueue(getApplicationContext());
 
@@ -265,6 +265,12 @@ public class MainActivity extends AppCompatActivity {
                 return params;
             }
         };
+
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     /**
@@ -317,6 +323,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         queue.add(stringRequest);
     }
@@ -405,6 +417,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         queue.add(stringRequest);
     }
 
@@ -433,7 +451,6 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<Medicine> parse(String jsonLine) {
         JsonElement jelement = new JsonParser().parse(jsonLine);
         JsonObject jobject = jelement.getAsJsonObject();
-        //jobject = jobject.getAsJsonObject("items");
         JsonArray jarray = jobject.getAsJsonArray("reminders");
 
         ArrayList<Medicine> result = new ArrayList<>();
@@ -479,6 +496,9 @@ public class MainActivity extends AppCompatActivity {
             //System.out.println("Got picture");
             Bitmap bmapPhoto = (Bitmap) data.getExtras().get("data");
 
+            //setContentView(R.layout.layout_load_screen);
+            System.out.println("Triggering");
+
             //Response of image processing from the server
             uploadImageAndGetResponse(bmapPhoto);
         }
@@ -490,22 +510,23 @@ public class MainActivity extends AppCompatActivity {
      */
     private void uploadImageAndGetResponse(Bitmap photo) {
         final String encodedImage = encodeImage(photo);
-        System.out.println("Encoded Image: " + encodedImage);
-
 
         //Making requests to server
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
-                        System.out.println(res);
+
+                        //System.out.println(res);
+
                         responseData = res;
                         //Showing toast message of the response
-                        Toast.makeText(getApplicationContext(), res , Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), res , Toast.LENGTH_LONG).show();
 
                         //Put the photo data returned into the server and start a new activity
                         Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
                         intent.putExtra("photoData", responseData);
+
                         startActivity(intent);
 
                     }
@@ -538,17 +559,20 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Creating a Request Queue
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        //RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         //Adding request to the queue
-        requestQueue.add(stringRequest);
+        queue.add(stringRequest);
 
-        setContentView(R.layout.layout_load_screen);
 
     }
-
-    //Encodes the Bitmap image to string
 
     /**
      * Encodes the Bitmap image to a string
@@ -559,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageBytes = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.URL_SAFE);
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;
     }
 
@@ -568,7 +592,7 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void panic_clicked(View view){
-
+        // Prompts the patient for if they are sure and not just pressed by mistake.
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Are you sure?");
         alertDialog.setMessage("");
@@ -576,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        // Do nothing.
 
                     }
                 });

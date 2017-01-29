@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -43,11 +44,13 @@ public class PanicActivity extends AppCompatActivity {
     public static double latitude=0;
     public static double longitude=0;
 
+    private RequestQueue requestQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_load_screen);
-
+        requestQueue = Volley.newRequestQueue(this);
 
         // Making requests to server for Panic Info
         StringRequest stringRequest = new StringRequest(Request.Method.GET, mapURL,
@@ -73,9 +76,10 @@ public class PanicActivity extends AppCompatActivity {
                     }
                 });
 
-
-        //Creating a Request Queue
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Adding request to the queue
         requestQueue.add(stringRequest);
@@ -161,8 +165,14 @@ public class PanicActivity extends AppCompatActivity {
             }
         };
 
+        // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Creating a Request Queue
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        //RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         //Adding request to the queue
         requestQueue.add(stringRequest);
