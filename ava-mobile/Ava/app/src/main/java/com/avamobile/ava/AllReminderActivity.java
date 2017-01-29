@@ -31,7 +31,7 @@ public class AllReminderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_reminder);
-
+        queue = Volley.newRequestQueue(this);
         // Gets all the data from the server.
         getAllData();
     }
@@ -41,7 +41,7 @@ public class AllReminderActivity extends AppCompatActivity {
      */
     public void getAllData() {
         // Makes an API call to the server requesting for all the reminders.
-        queue = Volley.newRequestQueue(this);
+
         // Make REST call here to get all the prescriptions and populate the array.
         String requestURL = ClientServer.URL+"/getReminders";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL,
