@@ -43,6 +43,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private RequestQueue requestQueue;
 
+    // Holds the user id sent from the server so that it is sent for every HTTP requests
+    private String userID;
+    private boolean loadSuccess;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,8 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        loadSuccess = false;
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -79,12 +85,12 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        loginButton.setEnabled(false);
+        //loginButton.setEnabled(false);
 
         String email = usernameText.getText().toString();
         String password = passwordText.getText().toString();
 
-        // TODO: Implement your own authentication logic here.
+        // TODO: Implement authentication logic here.
 
         sendLoginInfo(email, password);
     }
@@ -96,12 +102,10 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void sendLoginInfo(final String user, final String pswd) {
         // The progress load bar given.
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme);
+        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
-
 
         String sendingURL = ClientServer.URL + "/login";
         StringRequest loginRequest = new StringRequest(Request.Method.POST, sendingURL,
@@ -113,8 +117,9 @@ public class LoginActivity extends AppCompatActivity {
                         JsonObject jobject = jsonElement.getAsJsonObject();
                         //jobject = jobject.getAsJsonObject("items");
                         boolean loginSuccess = jobject.get("status").getAsBoolean();
+                        userID = jobject.get("id").getAsString();
 
-                        //System.out.println("Status: " + res);
+                        System.out.println("USER ID IS : " + userID);
 
                         if (loginSuccess) {
                             onLoginSuccess();
@@ -122,8 +127,9 @@ public class LoginActivity extends AppCompatActivity {
                         else {
                             onLoginFailed();
                         }
-                        progressDialog.dismiss();
+                        loadSuccess = true;
 
+                        progressDialog.dismiss();
                     }
                 },
                 new Response.ErrorListener() {
@@ -157,7 +163,30 @@ public class LoginActivity extends AppCompatActivity {
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         requestQueue.add(loginRequest);
+
+
+        // Initiates time out in case of server waiting error
+        initiateTimeout(progressDialog);
+    }
+
+    /**
+     * This is an error handling case when the server does not respond for 3 seconds.
+     * @param progressDialog
+     */
+    public void initiateTimeout(final ProgressDialog progressDialog) {
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        if (!loadSuccess) {
+                            // On complete call either onLoginSuccess or onLoginFailed
+                            onLoginFailed();
+                            // onLoginFailed();
+                            progressDialog.dismiss();
+                        }
+                    }
+                }, 3000);
     }
 
     @Override
@@ -181,6 +210,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         loginButton.setEnabled(true);
         Intent contentPage = new Intent(getApplicationContext(), MainActivity.class);
+        contentPage.putExtra(StaticNames.USER_ID, userID);
         startActivity(contentPage);
         finish();
     }

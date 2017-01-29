@@ -1,6 +1,5 @@
 package com.avamobile.ava;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -46,11 +45,20 @@ public class PanicActivity extends AppCompatActivity {
 
     private RequestQueue requestQueue;
 
+    // Holds the id of the user
+    private String userID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_load_screen);
         requestQueue = Volley.newRequestQueue(this);
+
+        String extraMessage = getIntent().getStringExtra(StaticNames.USER_ID);
+        System.out.println("Extra message is: " + extraMessage);
+        if (extraMessage != null) {
+            userID = extraMessage;
+        }
 
         // Making requests to server for Panic Info
         StringRequest stringRequest = new StringRequest(Request.Method.GET, mapURL,
@@ -104,6 +112,7 @@ public class PanicActivity extends AppCompatActivity {
                         // Since the necessary info is received, change the layout to the main activity alert.
                         setContentView(R.layout.activity_alert);
 
+                        //System.out.println("PANIC RESPONSE" + res);
                         JsonElement jelement = new JsonParser().parse(res);
                         JsonObject jobject = jelement.getAsJsonObject();
 
@@ -162,6 +171,19 @@ public class PanicActivity extends AppCompatActivity {
 
                 //returning parameters
                 return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                //Creating parameters
+                Map<String,String> headers = new Hashtable<String, String>();
+
+                //Adding parameters
+                headers.put(StaticNames.HEADER_USER_ID, userID);
+
+                //returning parameters
+                return headers;
             }
         };
 

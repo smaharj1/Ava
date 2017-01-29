@@ -105,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
     // It does the magic animation.
     AnimatorSet animation;
 
+    private String userID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +126,12 @@ public class MainActivity extends AppCompatActivity {
                 //MainActivity.this.setContentView(R.layout.activity_main);
 
                 queue = Volley.newRequestQueue(getApplicationContext());
+
+                String extraMessage = getIntent().getStringExtra(StaticNames.USER_ID);
+
+                if (!extraMessage.isEmpty()) {
+                    userID = extraMessage;
+                }
 
                 LinearLayout count_down = (LinearLayout) findViewById(R.id.reminder);
                 colorFade = ObjectAnimator.ofObject(count_down, "backgroundColor", new ArgbEvaluator(), Color.parseColor("#F9423A"), Color.parseColor("#ffffff"));
@@ -203,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
 
             closestMedicine = null;
             signal_alert(false);
-            //TODO:run_countdown();
 
             timer.cancel();
             //countDownRunner();
@@ -241,8 +248,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         System.out.println("Couldn't feed request from the server");
-
-
                     }
                 }){
             /**
@@ -318,11 +323,24 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
+                }
+            }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                //Creating parameters
+                Map<String,String> headers = new Hashtable<String, String>();
+
+                //Adding parameters
+                headers.put(StaticNames.HEADER_USER_ID, userID);
+
+                //returning parameters
+                return headers;
             }
-        });
+        };
 
         // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
@@ -415,7 +433,20 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                //Creating parameters
+                Map<String,String> headers = new Hashtable<String, String>();
+
+                //Adding parameters
+                headers.put(StaticNames.HEADER_USER_ID, userID);
+
+                //returning parameters
+                return headers;
+            }
+        };
 
         // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
@@ -497,7 +528,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bmapPhoto = (Bitmap) data.getExtras().get("data");
 
             //setContentView(R.layout.layout_load_screen);
-            System.out.println("Triggering");
+            //System.out.println("Triggering");
 
             //Response of image processing from the server
             uploadImageAndGetResponse(bmapPhoto);
@@ -520,8 +551,6 @@ public class MainActivity extends AppCompatActivity {
                         //System.out.println(res);
 
                         responseData = res;
-                        //Showing toast message of the response
-                        //Toast.makeText(getApplicationContext(), res , Toast.LENGTH_LONG).show();
 
                         //Put the photo data returned into the server and start a new activity
                         Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
@@ -557,6 +586,20 @@ public class MainActivity extends AppCompatActivity {
                 //returning parameters
                 return params;
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                //Creating parameters
+                Map<String,String> headers = new Hashtable<String, String>();
+
+                //Adding parameters
+                System.out.println("ADD MED: " + userID);
+                headers.put(StaticNames.HEADER_USER_ID, userID);
+
+                //returning parameters
+                return headers;
+            }
         };
 
         // Prevents from sending the request twice in slow connection. This seems to be bug otherwise.
@@ -566,10 +609,10 @@ public class MainActivity extends AppCompatActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Creating a Request Queue
-        //RequestQueue requestQueue = Volley.newRequestQueue(this);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         //Adding request to the queue
-        queue.add(stringRequest);
+        requestQueue.add(stringRequest);
 
 
     }
@@ -609,6 +652,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent alertActivity = new Intent(getApplicationContext(),PanicActivity.class);
+                        alertActivity.putExtra(StaticNames.USER_ID, userID);
                         startActivity(alertActivity);
 
                     }
