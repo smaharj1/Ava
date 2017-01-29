@@ -108,11 +108,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.entry_logo);
+        setContentView(R.layout.activity_main);
         animation = new AnimatorSet();
 
         // Initiate the animation for the application. It initiates the app with 3 second delay.
-        new CountDownTimer(4000,1000){
+        new CountDownTimer(2000,1000){
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 //set the new Content of your activity
-                MainActivity.this.setContentView(R.layout.activity_main);
+                //MainActivity.this.setContentView(R.layout.activity_main);
 
                 queue = Volley.newRequestQueue(getApplicationContext());
 
@@ -433,7 +433,6 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<Medicine> parse(String jsonLine) {
         JsonElement jelement = new JsonParser().parse(jsonLine);
         JsonObject jobject = jelement.getAsJsonObject();
-        //jobject = jobject.getAsJsonObject("items");
         JsonArray jarray = jobject.getAsJsonArray("reminders");
 
         ArrayList<Medicine> result = new ArrayList<>();
@@ -479,6 +478,9 @@ public class MainActivity extends AppCompatActivity {
             //System.out.println("Got picture");
             Bitmap bmapPhoto = (Bitmap) data.getExtras().get("data");
 
+            //setContentView(R.layout.layout_load_screen);
+            System.out.println("Triggering");
+
             //Response of image processing from the server
             uploadImageAndGetResponse(bmapPhoto);
         }
@@ -492,14 +494,15 @@ public class MainActivity extends AppCompatActivity {
         final String encodedImage = encodeImage(photo);
         System.out.println("Encoded Image: " + encodedImage);
 
-        setContentView(R.layout.layout_load_screen);
 
         //Making requests to server
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
-                        System.out.println(res);
+
+                        //System.out.println(res);
+
                         responseData = res;
                         //Showing toast message of the response
                         Toast.makeText(getApplicationContext(), res , Toast.LENGTH_LONG).show();
@@ -507,6 +510,7 @@ public class MainActivity extends AppCompatActivity {
                         //Put the photo data returned into the server and start a new activity
                         Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
                         intent.putExtra("photoData", responseData);
+
                         startActivity(intent);
 
                     }

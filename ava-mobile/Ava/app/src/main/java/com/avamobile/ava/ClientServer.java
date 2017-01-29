@@ -6,7 +6,7 @@ package com.avamobile.ava;
  */
 
 public class ClientServer {
-    public static final String URL = "http://fc014b4e.ngrok.io";
+    public static final String URL = "http://2dc232a7.ngrok.io";
 
     /**
      * Making the constructor private because we don't need any object of this class.
