@@ -45,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
 
     // Holds the user id sent from the server so that it is sent for every HTTP requests
     private String userID;
+
+    // This tracks if the server call has completed successfully.
     private boolean loadSuccess;
 
 
@@ -228,15 +230,15 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
 
-        if (username.isEmpty() /*|| !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()*/) {
+        if (username == null || username.isEmpty() /*|| !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()*/) {
             usernameText.setError("enter a valid email address");
             valid = false;
         } else {
             usernameText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 3 || password.length() > 10) {
-            passwordText.setError("between 4 and 10 alphanumeric characters");
+        if (password == null || password.isEmpty() || password.length() < 3 || password.length() > 10) {
+            passwordText.setError("between 3 and 10 alphanumeric characters");
             valid = false;
         } else {
             passwordText.setError(null);

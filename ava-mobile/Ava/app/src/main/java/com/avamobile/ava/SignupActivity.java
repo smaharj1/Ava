@@ -94,7 +94,7 @@ public class SignupActivity extends AppCompatActivity {
 
         // TODO: Implement your own signup logic here.
 
-        //sendInfoToServer(firstName, lastName, email, password);
+        sendInfoToServer(firstName, lastName, username, password);
 
 
     }
@@ -171,6 +171,8 @@ public class SignupActivity extends AppCompatActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(signupRequest);
+
+        initiateTimeout(progressDialog);
     }
 
     public void onSignupSuccess() {
@@ -213,28 +215,28 @@ public class SignupActivity extends AppCompatActivity {
         String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
 
-        if (firstName.isEmpty() || firstName.length() < 3) {
+        if (firstName == null || firstName.isEmpty() || firstName.length() < 3) {
             firstNameText.setError("at least 3 characters");
             valid = false;
         } else {
             firstNameText.setError(null);
         }
 
-        if (lastName.isEmpty()) {
+        if (lastName == null || lastName.isEmpty()) {
             lastNameText.setError("at least 3 characters");
             valid = false;
         } else {
             lastNameText.setError(null);
         }
 
-        if (username.isEmpty()) {
+        if (username == null || username.isEmpty()) {
             usernameText.setError("enter a valid email address");
             valid = false;
         } else {
             usernameText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 3 || password.length() > 10) {
+        if ( password == null || password.isEmpty() || password.length() < 3 || password.length() > 10) {
             passwordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;
         } else {

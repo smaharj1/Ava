@@ -15,8 +15,8 @@
         android:paddingRight="24dp">
 
         <ImageView android:src="@drawable/ava_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
+            android:layout_width="262dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:layout_gravity="center_horizontal" />
 
