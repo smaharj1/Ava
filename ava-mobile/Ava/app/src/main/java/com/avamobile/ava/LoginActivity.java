@@ -119,16 +119,20 @@ public class LoginActivity extends AppCompatActivity {
                         JsonObject jobject = jsonElement.getAsJsonObject();
                         //jobject = jobject.getAsJsonObject("items");
                         boolean loginSuccess = jobject.get("status").getAsBoolean();
-                        userID = jobject.get("id").getAsString();
-
-                        System.out.println("USER ID IS : " + userID);
 
                         if (loginSuccess) {
+                            userID = jobject.get("id").getAsString();
+
                             onLoginSuccess();
                         }
                         else {
                             onLoginFailed();
                         }
+
+
+                        System.out.println("USER ID IS : " + userID);
+
+
                         loadSuccess = true;
 
                         progressDialog.dismiss();
