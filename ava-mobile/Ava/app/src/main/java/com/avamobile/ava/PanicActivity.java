@@ -146,8 +146,6 @@ public class PanicActivity extends AppCompatActivity {
                         tv.setText(loc);
                         tv = (TextView) findViewById(R.id.phone);
                         tv.setText(phn);
-                        tv = (TextView) findViewById(R.id.web);
-                        tv.setText(web);
 
 
                         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.myCoordinatorLayout), R.string.panic_sent, Snackbar.LENGTH_LONG);
