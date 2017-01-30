@@ -28,6 +28,9 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+/**
+ * This class holds the sign up functionality for the user.
+ */
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
@@ -42,6 +45,8 @@ public class SignupActivity extends AppCompatActivity {
     @InjectView(R.id.last_name) EditText lastNameText;
     @InjectView(R.id.input_username) EditText usernameText;
     @InjectView(R.id.input_password) EditText passwordText;
+    @InjectView(R.id.emergency_contact_name) EditText emergencyContNameText;
+    @InjectView(R.id.emergency_contact_number) EditText emergencyContPhoneText;
     @InjectView(R.id.btn_signup) Button signupButton;
     @InjectView(R.id.link_login) TextView loginLink;
 
@@ -109,6 +114,7 @@ public class SignupActivity extends AppCompatActivity {
     private void sendInfoToServer(final String firstname, final String lastName, final String username,
                                   final String password) {
 
+        // Initiates the progress dialog to show the load screen.
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
@@ -155,7 +161,7 @@ public class SignupActivity extends AppCompatActivity {
                 //Creating parameters
                 Map<String,String> params = new Hashtable<String, String>();
 
-                //Adding parameters
+                //Adding the parameters and sending the user info to the server.
                 params.put(USER_NAME, username);
                 params.put(FIRST_NAME, firstname);
                 params.put(LAST_NAME, lastName);
@@ -165,6 +171,8 @@ public class SignupActivity extends AppCompatActivity {
                 return params;
             }
         };
+
+        // This helps not make more than one call to the server.
         signupRequest.setRetryPolicy(new DefaultRetryPolicy(
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -172,6 +180,8 @@ public class SignupActivity extends AppCompatActivity {
 
         requestQueue.add(signupRequest);
 
+        // Initiate time out so that if there is something wrong with the server and it doesn't
+        // respond, then it gives out the error message.
         initiateTimeout(progressDialog);
     }
 
@@ -207,13 +217,20 @@ public class SignupActivity extends AppCompatActivity {
                 }, 4000);
     }
 
+    /**
+     * Validates the user input before making server call.
+     * @return
+     */
     public boolean validate() {
         boolean valid = true;
 
+        // Gets the string representation of the user input.
         String firstName = firstNameText.getText().toString();
         String lastName = lastNameText.getText().toString();
         String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
+        String emergencyContName = emergencyContNameText.getText().toString();
+        String emergencyContContact = emergencyContPhoneText.getText().toString();
 
         if (firstName == null || firstName.isEmpty() || firstName.length() < 3) {
             firstNameText.setError("at least 3 characters");
@@ -241,6 +258,22 @@ public class SignupActivity extends AppCompatActivity {
             valid = false;
         } else {
             passwordText.setError(null);
+        }
+
+        if (emergencyContName == null || emergencyContName.isEmpty()) {
+            emergencyContNameText.setError("Fill out emergency contact name");
+            valid = false;
+        }
+        else {
+            emergencyContNameText.setError(null);
+        }
+
+        if (emergencyContContact == null || emergencyContContact.isEmpty()) {
+            emergencyContPhoneText.setError("Fill out emergency contact number");
+            valid = false;
+        }
+        else {
+            emergencyContPhoneText.setError(null);
         }
 
         return valid;

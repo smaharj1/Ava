@@ -230,8 +230,10 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
 
+        System.out.println("OLA: " + username.isEmpty());
         if (username == null || username.isEmpty() /*|| !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()*/) {
             usernameText.setError("enter a valid email address");
+
             valid = false;
         } else {
             usernameText.setError(null);
