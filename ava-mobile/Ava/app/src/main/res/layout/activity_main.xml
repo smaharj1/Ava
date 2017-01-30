@@ -6,7 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.avamobile.ava.MainActivity">
+    tools:context="com.avamobile.ava.MainActivity"
+    android:background="@drawable/ava_background">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -31,7 +32,7 @@
                 android:background="@drawable/round_button"
                 android:id="@+id/panic"
                 android:onClick="panic_clicked"
-                android:textColor="@android:color/background_light"
+                android:textColor="@android:color/white"
                 android:textSize="30sp" />
         </LinearLayout>
 
@@ -79,11 +80,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:background="@android:color/holo_blue_light"
+            android:background="@layout/standard_button"
             android:id="@+id/add_medicine"
             android:layout_marginBottom="20dp"
             android:textSize="30sp"
-            android:textColor="@android:color/background_light"
+            android:textColor="@android:color/white"
             android:layout_marginTop="20dp"
             android:onClick="addMedicine" />
 
@@ -94,9 +95,9 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:id="@+id/details_clicked"
-            android:background="@android:color/holo_blue_light"
+            android:background="@layout/standard_button"
             android:textSize="30sp"
-            android:textColor="@android:color/background_light" />
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
