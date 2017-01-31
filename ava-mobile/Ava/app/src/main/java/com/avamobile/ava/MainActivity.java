@@ -566,6 +566,8 @@ public class MainActivity extends AppCompatActivity {
                         JsonElement jelement = new JsonParser().parse(res);
                         JsonObject jsonObject = jelement.getAsJsonObject();
 
+                        System.out.println("Response is " + res);
+
                         boolean success= jsonObject.get("status").getAsBoolean();
                         if (!success) {
                             Snackbar mySnackbar = Snackbar.make(findViewById(R.id.mainLayout),
@@ -592,10 +594,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError volleyError) {
                         System.out.println("Couldn't feed request from the server");
 
-                        //Put the photo data returned into the server and start a new activity
-                        Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
-                        intent.putExtra("photoData", responseData);
-                        startActivity(intent);
+                        Snackbar mySnackbar = Snackbar.make(findViewById(R.id.mainLayout),
+                                "Server was not that friendly this time. Try again", Snackbar.LENGTH_LONG);
+                        mySnackbar.show();
+                        progressDialog.dismiss();
+                        return;
                         //Showing toast
                         //Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
                     }
