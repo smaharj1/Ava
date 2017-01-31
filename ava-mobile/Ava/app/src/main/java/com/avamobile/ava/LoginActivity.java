@@ -193,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                             progressDialog.dismiss();
                         }
                     }
-                }, 3000);
+                }, 5000);
     }
 
     @Override
@@ -203,7 +203,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 // TODO: Implement successful signup logic here
                 // By default we just finish the Activity and log them in automatically
-                this.finish();
+                //this.finish();
+
+                Toast.makeText(getApplicationContext(), "Please log in",Toast.LENGTH_LONG).show();
             }
         }
     }

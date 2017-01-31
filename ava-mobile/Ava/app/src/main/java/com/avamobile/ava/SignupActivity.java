@@ -39,6 +39,8 @@ public class SignupActivity extends AppCompatActivity {
     private final String LAST_NAME = "lastname";
     private final String USER_NAME = "username";
     private final String PASSWORD = "password";
+    private final String EMERGENCY_NAME = "emergencyName";
+    private final String EMERGENCY_PHONE = "emergencyPhone";
 
 
     @InjectView(R.id.first_name) EditText firstNameText;
@@ -96,10 +98,12 @@ public class SignupActivity extends AppCompatActivity {
         String lastName = lastNameText.getText().toString();
         String username = usernameText.getText().toString();
         String password = passwordText.getText().toString();
+        String emerName = emergencyContNameText.getText().toString();
+        String emerPhone = emergencyContPhoneText.getText().toString();
 
         // TODO: Implement your own signup logic here.
 
-        sendInfoToServer(firstName, lastName, username, password);
+        sendInfoToServer(firstName, lastName, username, password, emerName, emerPhone);
 
 
     }
@@ -112,7 +116,7 @@ public class SignupActivity extends AppCompatActivity {
      * @param password It holds the password
      */
     private void sendInfoToServer(final String firstname, final String lastName, final String username,
-                                  final String password) {
+                                  final String password, final String emerContName, final String emerContPhone) {
 
         // Initiates the progress dialog to show the load screen.
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this);
@@ -166,6 +170,8 @@ public class SignupActivity extends AppCompatActivity {
                 params.put(FIRST_NAME, firstname);
                 params.put(LAST_NAME, lastName);
                 params.put(PASSWORD, password);
+                params.put(EMERGENCY_NAME, emerContName);
+                params.put(EMERGENCY_PHONE, emerContPhone);
 
                 //returning parameters
                 return params;

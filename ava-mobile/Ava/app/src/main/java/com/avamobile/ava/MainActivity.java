@@ -288,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
      * @return
      */
     public Medicine parseOne(String response) {
+
         JsonElement jelement = new JsonParser().parse(response);
         JsonObject jobject = jelement.getAsJsonObject();
         //jobject = jobject.getAsJsonObject("items");
@@ -366,6 +367,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String res) {
                         System.out.println("The response is "+ res);
+
+                        // Checks if the response is correct. If not, then just return.
+                        if (res.isEmpty()) {
+                            return;
+                        }
                         //Medicine receivedDrug = parse(res);
                         closestMedicine = parseOne(res);
                         reminderInQueue.add(closestMedicine);
