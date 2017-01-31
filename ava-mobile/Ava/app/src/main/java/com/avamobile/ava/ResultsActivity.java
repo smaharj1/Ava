@@ -19,6 +19,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -50,6 +51,7 @@ public class ResultsActivity extends AppCompatActivity {
         System.out.println("Inside Results Activity");
         System.out.println(medicineName);
 
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
         String extraMessage = getIntent().getStringExtra(StaticNames.USER_ID);
         System.out.println("Extra message is: " + extraMessage);
         if (extraMessage != null) {
@@ -122,6 +124,8 @@ public class ResultsActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
+                        Toast.makeText(ResultsActivity.this, "The reminders have been set", Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 },
                 new Response.ErrorListener() {
@@ -182,9 +186,7 @@ public class ResultsActivity extends AppCompatActivity {
         //Adding request to the queue
         requestQueue.add(stringRequest);
 
-
-        Toast.makeText(ResultsActivity.this, "The reminders have been set", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, MainActivity.class);
+        //startActivity(intent);
     }
 }
