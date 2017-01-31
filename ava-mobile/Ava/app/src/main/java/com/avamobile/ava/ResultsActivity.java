@@ -132,6 +132,9 @@ public class ResultsActivity extends AppCompatActivity {
         final String selec_weekdays = selectedWeekdays.toString();
         final String selec_times = selectedTimes.toString();
 
+        System.out.println(selec_weekdays);
+        System.out.println(selec_times);
+
         //Sending request to server with the data
         String requestURL = ClientServer.URL+"/addMedication";
 
@@ -176,7 +179,6 @@ public class ResultsActivity extends AppCompatActivity {
                 Map<String, String> params = new Hashtable<String, String>();
 
                 //Adding parameters
-                params.put("mongoid", userID);
                 params.put("medicine", medicineName);
                 params.put("weekdays", selec_weekdays);
                 params.put("times", selec_times);
