@@ -117,7 +117,7 @@ public class ResultsActivity extends AppCompatActivity {
 
                     //Converting time to military format and adding it to the vector
                     SimpleDateFormat standardFormat = new SimpleDateFormat("hh:mm a", Locale.US);
-                    SimpleDateFormat militaryFormat = new SimpleDateFormat("HH:mm", Locale.US);
+                    SimpleDateFormat militaryFormat = new SimpleDateFormat("HHmm", Locale.US);
 
                     try {
                         selectedTimes.add(militaryFormat.format(standardFormat.parse(selectedTime)));
