@@ -292,13 +292,22 @@ public class MainActivity extends AppCompatActivity {
         JsonElement jelement = new JsonParser().parse(response);
         JsonObject jobject = jelement.getAsJsonObject();
         //jobject = jobject.getAsJsonObject("items");
-        String medication = jobject.get("medication").toString();
-        JsonArray timeArray = jobject.getAsJsonArray("time");
+        int time = jobject.get("time").getAsInt();
+        JsonArray medicationArray = jobject.getAsJsonArray("medications");
+
+        String medication ="";
+
+        for (int i =0 ; i < medicationArray.size(); i++) {
+            medication = medication+  medicationArray.get(i).getAsString();
+        }
 
         int totalTime = 0;
 
-        totalTime += timeArray.get(0).getAsInt()*3600 ;
-        totalTime += timeArray.get(1).getAsInt()*60;
+        totalTime += (time/100) * 3600;
+        totalTime += (time % 100) * 60;
+
+        //totalTime += timeArray.get(0).getAsInt()*3600 ;
+        //totalTime += timeArray.get(1).getAsInt()*60;
 
 
         return new Medicine(medication, totalTime);
@@ -398,8 +407,7 @@ public class MainActivity extends AppCompatActivity {
                                             if (minutes > 30) {
                                                 countDownView.setText(closestMedicine.getTime());
                                                 displayTime(closestMedicine.getTargetTime());
-
-
+                                                return;
 
                                             } else {
                                                 countDownView.setText(String.valueOf(minutes) + ":" + String.valueOf(seconds));
@@ -563,10 +571,10 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
+                        System.out.println("Response is " + res);
                         JsonElement jelement = new JsonParser().parse(res);
                         JsonObject jsonObject = jelement.getAsJsonObject();
 
-                        System.out.println("Response is " + res);
 
                         boolean success= jsonObject.get("status").getAsBoolean();
                         if (!success) {
@@ -577,7 +585,7 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
 
-                        responseData = res;
+                        responseData = jsonObject.get("medicine").getAsString();
 
                         //Put the photo data returned into the server and start a new activity
                         Intent intent = new Intent(getApplicationContext(), ResultsActivity.class);
@@ -598,7 +606,7 @@ public class MainActivity extends AppCompatActivity {
                                 "Server was not that friendly this time. Try again", Snackbar.LENGTH_LONG);
                         mySnackbar.show();
                         progressDialog.dismiss();
-                        return;
+
                         //Showing toast
                         //Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
                     }
