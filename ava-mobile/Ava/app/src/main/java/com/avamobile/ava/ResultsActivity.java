@@ -37,7 +37,7 @@ public class ResultsActivity extends AppCompatActivity {
     private String medicineName;
     TextView medicineDetails;
 
-    RequestQueue requestQueue;
+    //RequestQueue requestQueue;
 
     private String userID;
 
@@ -51,7 +51,7 @@ public class ResultsActivity extends AppCompatActivity {
         System.out.println("Inside Results Activity");
         System.out.println(medicineName);
 
-        requestQueue = Volley.newRequestQueue(getApplicationContext());
+        //requestQueue = Volley.newRequestQueue(getApplicationContext());
         String extraMessage = getIntent().getStringExtra(StaticNames.USER_ID);
         System.out.println("Extra message is: " + extraMessage);
         if (extraMessage != null) {
@@ -120,18 +120,30 @@ public class ResultsActivity extends AppCompatActivity {
 
         //Sending request to server with the data
         String requestURL = ClientServer.URL+"/addMedication";
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, requestURL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
-                        Toast.makeText(ResultsActivity.this, "The reminders have been set", Toast.LENGTH_LONG).show();
-                        finish();
+
+                        JsonElement jsonElement = new JsonParser().parse(res);
+                        JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+                        boolean isSuccess = jsonObject.get("status").getAsBoolean();
+
+                        if (isSuccess) {
+                            Toast.makeText(ResultsActivity.this, "The reminders have been set", Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(ResultsActivity.this, "Please try it with fields.", Toast.LENGTH_LONG).show();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        System.out.println("Couldn't send Prescription Info to the server");
+                        Toast.makeText(ResultsActivity.this, "Server error. Please try again", Toast.LENGTH_LONG).show();
 
                         //Showing toast
                         //Toast.makeText(MainActivity.this, volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
@@ -150,10 +162,10 @@ public class ResultsActivity extends AppCompatActivity {
                 Map<String, String> params = new Hashtable<String, String>();
 
                 //Adding parameters
-                params.put("MONGOID", userID);
-                params.put("MEDICINE", medicineName);
-                params.put("WEEKDAYS", selec_weekdays);
-                params.put("TIMES", selec_times);
+                params.put("mongoid", userID);
+                params.put("medicine", medicineName);
+                params.put("weekdays", selec_weekdays);
+                params.put("times", selec_times);
 
 
                 //returning parameters
@@ -181,7 +193,7 @@ public class ResultsActivity extends AppCompatActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Creating a Request Queue
-        //RequestQueue requestQueue = Volley.newRequestQueue(this);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         //Adding request to the queue
         requestQueue.add(stringRequest);
