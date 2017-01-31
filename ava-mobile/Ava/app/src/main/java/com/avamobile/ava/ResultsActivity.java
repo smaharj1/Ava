@@ -33,7 +33,7 @@ import java.util.Vector;
 
 public class ResultsActivity extends AppCompatActivity {
 
-    String dataToDisplay;
+    private String medicineName;
     TextView medicineDetails;
 
     RequestQueue requestQueue;
@@ -46,9 +46,9 @@ public class ResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_results);
 
         //Getting intents
-        dataToDisplay = getIntent().getStringExtra("photoData");
+        medicineName = getIntent().getStringExtra("photoData");
         System.out.println("Inside Results Activity");
-        System.out.println(dataToDisplay);
+        System.out.println(medicineName);
 
         String extraMessage = getIntent().getStringExtra(StaticNames.USER_ID);
         System.out.println("Extra message is: " + extraMessage);
@@ -58,7 +58,7 @@ public class ResultsActivity extends AppCompatActivity {
 
         //Displaying captured medicine details by camera in previous activity
         medicineDetails = (TextView)findViewById(R.id.medicineDetails);
-        medicineDetails.append("\n\n" + dataToDisplay);
+        medicineDetails.append("\n\n" + medicineName);
 
         //Button
         Button saveButton = (Button)findViewById(R.id.btn_Save);
@@ -117,7 +117,7 @@ public class ResultsActivity extends AppCompatActivity {
         final String selec_times = selectedTimes.toString();
 
         //Sending request to server with the data
-        String requestURL = ClientServer.URL+"/prescriptionInfo";
+        String requestURL = ClientServer.URL+"/addMedication";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, requestURL,
                 new Response.Listener<String>() {
                     @Override
@@ -146,8 +146,11 @@ public class ResultsActivity extends AppCompatActivity {
                 Map<String, String> params = new Hashtable<String, String>();
 
                 //Adding parameters
+                params.put("MONGOID", userID);
+                params.put("MEDICINE", medicineName);
                 params.put("WEEKDAYS", selec_weekdays);
                 params.put("TIMES", selec_times);
+
 
                 //returning parameters
                 return params;
