@@ -26,7 +26,9 @@ import com.google.gson.JsonParser;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -110,7 +112,19 @@ public class ResultsActivity extends AppCompatActivity {
             if (view.getClass().getName().contains("Spinner")) {
                 Spinner time = (Spinner) view;
                 if (!time.getSelectedItem().toString().equals("None")) {
-                    selectedTimes.add(time.getSelectedItem().toString());
+                    String selectedTime = time.getSelectedItem().toString();
+
+                    //Converting time to military format and adding it to the vector
+                    SimpleDateFormat standardFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+                    SimpleDateFormat militaryFormat = new SimpleDateFormat("HH:mm", Locale.US);
+
+                    try {
+                        selectedTimes.add(militaryFormat.format(standardFormat.parse(selectedTime)));
+                    }
+                    catch (Exception e){
+                        //It shouldn't come to this since the time selection dropdown is pre-specified
+                        System.out.println("Couldn't parse the selected time");
+                    }
                 }
             }
         }
