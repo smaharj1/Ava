@@ -278,6 +278,10 @@ public class SignupActivity extends AppCompatActivity {
             emergencyContPhoneText.setError("Fill out emergency contact number");
             valid = false;
         }
+        else if (emergencyContContact.length()<=10) {
+            valid = false;
+            emergencyContPhoneText.setError("Please fill out country code.");
+        }
         else {
             emergencyContPhoneText.setError(null);
         }

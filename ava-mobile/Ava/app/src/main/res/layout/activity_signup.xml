@@ -103,7 +103,7 @@
             <EditText android:id="@+id/emergency_contact_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="phone"
                 android:hint="Emergency contact's phone"
                 android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
