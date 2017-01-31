@@ -669,6 +669,13 @@ public class MainActivity extends AppCompatActivity {
                 }, 3000);
     }
 
+    public void logout(View view) {
+        UserSharedPreferences.clearUserName(getApplicationContext());
+        Intent login = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(login);
+        finish();
+    }
+
     /**
      * Encodes the Bitmap image to a string
      * @param photo It is the bitmap image.

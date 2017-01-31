@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     private final String USERNAME = "username";
     private final String PASSWORD = "password";
+    private final String USER_ID = "userid";
 
     @InjectView(R.id.input_email) EditText usernameText;
     @InjectView(R.id.input_password) EditText passwordText;
@@ -53,6 +54,19 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserSharedPreferences.getUserID(getApplicationContext()).length() != 0)
+        {
+            //System.out.println("LOG IN: info is found");
+            // Create an intent that directly takes to the main activity
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra(StaticNames.USER_ID, UserSharedPreferences.getUserID(getApplicationContext()));
+            startActivity(intent);
+            finish();
+        }
+
+
+
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
 
@@ -218,6 +232,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         loginButton.setEnabled(true);
+        UserSharedPreferences.setUserID(getApplicationContext(),userID);
         Intent contentPage = new Intent(getApplicationContext(), MainActivity.class);
         contentPage.putExtra(StaticNames.USER_ID, userID);
         startActivity(contentPage);

@@ -95,7 +95,8 @@ public class ResultsActivity extends AppCompatActivity {
                 view = weekdaysLayout.getChildAt(index);
                 CheckBox weekday = (CheckBox) view;
                 if (weekday.isChecked()) {
-                    selectedWeekdays.add(weekday.getText().toString());
+                    String dayNumberEquivalent = convertDayToNum(weekday.getText().toString());
+                    selectedWeekdays.add(dayNumberEquivalent);
                 }
                 System.out.println();
                 //do something with your child element
@@ -216,5 +217,27 @@ public class ResultsActivity extends AppCompatActivity {
 
         //Intent intent = new Intent(this, MainActivity.class);
         //startActivity(intent);
+    }
+
+    private String convertDayToNum(String day) {
+        if (day.equalsIgnoreCase("sunday")) {
+            return "0";
+        }
+        else if (day.equalsIgnoreCase("monday")) {
+            return "1";
+        }
+        else if (day.equalsIgnoreCase("tuesday")) {
+            return "2";
+        }
+        else if (day.equalsIgnoreCase("wednesday")) {
+            return "3";
+        }
+        else if (day.equalsIgnoreCase("thursday")) {
+            return "4";
+        }
+        else if (day.equalsIgnoreCase("friday")) {
+            return "5";
+        }
+        return "6";
     }
 }
