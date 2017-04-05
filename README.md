@@ -1,7 +1,7 @@
-#Ava
+# Ava
 Ava tears down the barriers that separate people in need from effective and timely treatment.
 
-##Dedication
+## Dedication
 This is solely dedicated to Dr. Scott E. Frees, Professor of Computer Science at Ramapo College of New Jersey, Lehigh Alum, and heart of our hearts.  
 
 ## What it does
@@ -26,5 +26,5 @@ We learned a ton about the tools that we used, whether it was sending and receiv
 ## What's next for Ava
 Ava can only move forward.  Hopefully she will save some lives!
 
-##2nd place winner at Lehigh Hacks Fall 2016
-##Best Medical Hack by Knowledgent, Lehigh Hacks 2016
+## 2nd place winner at Lehigh Hacks Fall 2016
+## Best Medical Hack by Knowledgent, Lehigh Hacks 2016
